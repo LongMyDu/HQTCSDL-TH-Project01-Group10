@@ -144,3 +144,6 @@ CREATE TABLE [NhanVien] (
   PRIMARY KEY ([MaNhanVien])
 );
 
+ALTER TABLE [TaiKhoan]
+ADD CONSTRAINT check_TaiKhoan_PhanLoai 
+CHECK(PhanLoai IN ('DT', 'KH', 'TX', 'NV', 'AD'));

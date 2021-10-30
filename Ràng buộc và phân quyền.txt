@@ -1,0 +1,32 @@
+Ràng buộc:
+	Không được có 2 người dùng có cùng một tài khoản
+	Tất cả sản phẩm cùng 1 đơn hàng đều phải cùng 1 chi nhánh cung cấp
+	Phân loại tài khoản: 'DT', 'KH', 'TX', 'NV', 'AD'
+	Phí sản phẩm(DonHang) = tổng( số lượng * đơn giá (CTDH))
+
+Quyền:
+Đối tác:
+	Xem, xóa dòng, cập nhật tình trạng vận chuyển đơn hàng
+	Xem hợp đồng
+	Xem, xóa, sửa sản phẩm
+	Xem, sửa thông tin đối tác
+
+
+Khách hàng
+	Xem, Thêm đơn đặt hàng (xem của người đó)
+	Xem danh sách đối tác, chi nhánh, sản phẩm
+	Xem, sửa thông tin khách hàng 
+
+Tài xế
+	Xem, cập nhật tình trạng vận chuyển đơn hàng
+	Xem, sửa thông tin tài xế
+
+Nhân viên
+	Xem, cập nhật tình trạng duyệt hợp đồng
+
+Admin
+	Thêm, xóa, sửa tài khoản admin, nhân viên
+	Cập nhật thông tin tài khoản
+	Xem, cập nhật tình trạng khóa tài khoản
+	Cấp quyền thao tác trên dữ liệu
+	Cấp quyền thao tác trên giao diện

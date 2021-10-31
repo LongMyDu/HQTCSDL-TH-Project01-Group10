@@ -6,8 +6,8 @@ Ràng buộc:
 
 Quyền:
 Đối tác:
-	Xem, xóa dòng, cập nhật tình trạng vận chuyển đơn hàng
-	Xem hợp đồng
+	Xem, cập nhật tình trạng vận chuyển đơn hàng
+	Xem, thêm hợp đồng
 	Xem, xóa, sửa sản phẩm
 	Xem, sửa thông tin đối tác
 

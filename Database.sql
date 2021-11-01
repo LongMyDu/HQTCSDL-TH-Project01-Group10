@@ -1,4 +1,4 @@
---GO
+﻿--GO
 --ALTER DATABASE DB_QLDatChuyenHang
 --SET SINGLE_USER WITH ROLLBACK IMMEDIATE
 --USE master
@@ -163,3 +163,8 @@ BEGIN
 	OR EXISTS (SELECT* FROM DELETED I WHERE I.[MaDonHang] = [DONHANG].[MaDonHang])
 END
 GO
+------
+
+
+insert into KHACHHANG values 
+('0', 'Nguyễn Văn A', '0123456777', 'Quận 5 TP Hồ Chí Minh', 'Nguyenvana@gmail.com', 'customer1')

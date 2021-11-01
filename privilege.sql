@@ -6,11 +6,15 @@
 --Create user LMD For login LMD 
 --exec sp_addrolemember 'Admin','ExampleAdmin'  -- Chỉ có exampleAdmin là thuộc role admin, LMD thì không
 
+use DB_QLDatChuyenHang
+go
+
 -- Phân quyền cho role Admin
 exec sp_addrole 'Admin'
 GRANT SELECT, INSERT, UPDATE, DELETE ON NhanVien TO Admin WITH GRANT OPTION
 GRANT SELECT, INSERT, UPDATE, DELETE ON [Admin] TO Admin WITH GRANT OPTION
 GRANT SELECT, UPDATE ON TaiKhoan TO Admin WITH GRANT OPTION 
+
 
 -- tạo tài khoản mẫu cho khách hàng 
 exec sp_addlogin 'customer1' , '123456','DB_QLDatChuyenHang'
@@ -46,3 +50,9 @@ grant select on DonHang to Customer
 revoke select on Doitac from Customer 
 select * from DOITAC
 
+-- Phân quyền cho role Đối tác
+exec sp_addrole 'DoiTac'
+GRANT SELECT ON [DONHANG] TO [DOITAC] WITH GRANT OPTION
+GRANT UPDATE ON [DONHANG]([TinhTrangVanChuyen]) TO [DOITAC] WITH GRANT OPTION
+GRANT SELECT, INSERT ON [HOPDONG] TO [DOITAC] WITH GRANT OPTION
+GRANT SELECT, INSERT, UPDATE, DELETE ON [SANPHAM] TO [DOITAC] WITH GRANT OPTION

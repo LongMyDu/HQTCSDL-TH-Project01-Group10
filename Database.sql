@@ -1,4 +1,4 @@
---GO
+﻿--GO
 --ALTER DATABASE DB_QLDatChuyenHang
 --SET SINGLE_USER WITH ROLLBACK IMMEDIATE
 --USE master
@@ -146,10 +146,11 @@ CREATE TABLE [NhanVien] (
 GO
 
 ALTER TABLE [TaiKhoan]
-ADD CONSTRAINT check_TaiKhoan_PhanLoai 
+ADD CONSTRAINT CK_TaiKhoan_PhanLoai 
 CHECK(PhanLoai IN ('DT', 'KH', 'TX', 'NV', 'AD'));
 GO
 
+-- Ràng buộc: PhiSP (trong DonHang) = Tổng các Soluong * Gia trong ChiTietDonHang
 CREATE TRIGGER CTDH_DONHANG_PHISP ON [CHITIETDONHANG]
 FOR INSERT, UPDATE, DELETE
 AS
@@ -161,5 +162,165 @@ BEGIN
 				WHERE CTDH.[MaDonHang] = [DONHANG].[MaDonHang])
 	WHERE EXISTS (SELECT* FROM INSERTED I WHERE I.[MaDonHang] = [DONHANG].[MaDonHang])
 	OR EXISTS (SELECT* FROM DELETED I WHERE I.[MaDonHang] = [DONHANG].[MaDonHang])
+END
+GO
+
+-- Ràng buộc: Mỗi tài khoản chỉ được thuộc về 1 người dùng
+-- Bảng TAH:
+--					Thêm	|	Xóa		|	Sửa
+--DoiTac			  +		|	 -		|	 + (TenTaiKhoan)
+--TaiXe				  +		|	 -		|	 + (TenTaiKhoan)
+--KhachHang			  +		|	 -		|	 + (TenTaiKhoan)
+--NhanVien			  +		|	 -		|	 + (TenTaiKhoan)
+--Admin				  +		|	 -		|	 + (TenTaiKhoan)
+
+
+-- Ràng buộc: Mỗi tài khoản phải cùng loại với người dùng sử dụng tài khoản đó 
+-- Bảng TAH:
+--					Thêm	|	Xóa		|	Sửa
+--TaiKhoan			  -		|	 -		|	 + (PhanLoai)	
+--DoiTac			  +		|	 -		|	 + (TenTaiKhoan)
+--TaiXe				  +		|	 -		|	 + (TenTaiKhoan)
+--KhachHang			  +		|	 -		|	 + (TenTaiKhoan)
+--NhanVien			  +		|	 -		|	 + (TenTaiKhoan)
+--Admin				  +		|	 -		|	 + (TenTaiKhoan)
+
+
+-- Trigger trên bảng TaiKhoan
+CREATE TRIGGER TG_TaiKhoan_PhanLoai ON [TAIKHOAN]
+FOR UPDATE
+AS
+IF UPDATE(PhanLoai)
+BEGIN
+	IF EXISTS (
+		SELECT * 
+		FROM INSERTED I 
+		WHERE I.TenTaiKhoan IN (
+			SELECT TenTaiKhoan FROM [KHACHHANG] KH WHERE I.TenTaiKhoan = KH.TenTaiKhoan
+			UNION
+			SELECT TenTaiKhoan FROM [DOITAC] DT WHERE I.TenTaiKhoan = DT.TenTaiKhoan
+			UNION
+			SELECT TenTaiKhoan FROM [TAIXE] TX WHERE I.TenTaiKhoan = TX.TenTaiKhoan
+			UNION
+			SELECT TenTaiKhoan FROM [NHANVIEN] NV WHERE I.TenTaiKhoan = NV.TenTaiKhoan
+			UNION
+			SELECT TenTaiKhoan FROM [ADMIN] AD WHERE I.TenTaiKhoan = AD.TenTaiKhoan
+		)
+	)
+	BEGIN
+		raiserror(N'Lỗi: Tài khoản đã có người sử dụng. Không được phép thay đổi loại tài khoản.', 16, 1)
+		rollback
+	END
+END
+GO
+
+-- Trigger trên bảng DOITAC
+CREATE TRIGGER TG_DOITAC_TAIKHOAN ON [DOITAC]
+FOR INSERT, UPDATE
+AS
+IF UPDATE(TenTaiKhoan)
+BEGIN
+	IF EXISTS (
+		SELECT * 
+		FROM INSERTED I join [TaiKhoan] TK on (I.TenTaiKhoan = TK.TenTaiKhoan)
+		WHERE (TK.PhanLoai != 'DT') 
+			OR (I.TenTaiKhoan IN (
+			SELECT TenTaiKhoan 
+			FROM [DOITAC] DT 
+			WHERE I.TenTaiKhoan = DT.TenTaiKhoan AND I.MaDoiTac != DT.MaDoiTac
+		))
+	)
+	BEGIN
+		raiserror(N'Lỗi: Tài khoản không hợp lệ. Tài khoản đã có người khác sử dụng hoặc không cùng loại với người dùng.', 16, 1)
+		rollback
+	END
+END
+GO
+
+-- Trigger trên bảng KHACHHANG
+CREATE TRIGGER TG_KHACHHANG_TAIKHOAN ON [KHACHHANG]
+FOR INSERT, UPDATE
+AS
+IF UPDATE(TenTaiKhoan)
+BEGIN
+	IF EXISTS (
+		SELECT * 
+		FROM INSERTED I join [TaiKhoan] TK on (I.TenTaiKhoan = TK.TenTaiKhoan)
+		WHERE (TK.PhanLoai != 'KH') OR (I.TenTaiKhoan IN (
+			SELECT TenTaiKhoan 
+			FROM [KHACHHANG] KH 
+			WHERE I.TenTaiKhoan = KH.TenTaiKhoan AND I.MaKH != KH.MaKH
+		))
+	)
+	BEGIN
+		raiserror(N'Lỗi: Tài khoản không hợp lệ. Tài khoản đã có người khác sử dụng hoặc không cùng loại với người dùng.', 16, 1)
+		rollback
+	END
+END
+GO
+
+-- Trigger trên bảng TAIXE
+CREATE TRIGGER TG_TAIXE_TAIKHOAN ON [TAIXE]
+FOR INSERT, UPDATE
+AS
+IF UPDATE(TenTaiKhoan)
+BEGIN
+	IF EXISTS (
+		SELECT * 
+		FROM INSERTED I join [TaiKhoan] TK on (I.TenTaiKhoan = TK.TenTaiKhoan)
+		WHERE (TK.PhanLoai != 'TX') OR (I.TenTaiKhoan IN (
+			SELECT TenTaiKhoan 
+			FROM [TAIXE] TX 
+			WHERE I.TenTaiKhoan = TX.TenTaiKhoan AND I.MaTaiXe != TX.MaTaiXe
+		))
+	)
+	BEGIN
+		raiserror(N'Lỗi: Tài khoản không hợp lệ. Tài khoản đã có người khác sử dụng hoặc không cùng loại với người dùng.', 16, 1)
+		rollback
+	END
+END
+GO
+
+-- Trigger trên bảng NHANVIEN
+CREATE TRIGGER TG_NHANVIEN_TAIKHOAN ON [NHANVIEN]
+FOR INSERT, UPDATE
+AS
+IF UPDATE(TenTaiKhoan)
+BEGIN
+	IF EXISTS (
+		SELECT * 
+		FROM INSERTED I join [TaiKhoan] TK on (I.TenTaiKhoan = TK.TenTaiKhoan)
+		WHERE (TK.PhanLoai != 'NV') OR (I.TenTaiKhoan IN (
+			SELECT TenTaiKhoan 
+			FROM [NHANVIEN] NV
+			WHERE I.TenTaiKhoan = NV.TenTaiKhoan AND I.MaNhanVien!= NV.MaNhanVien
+		))
+	)
+	BEGIN
+		raiserror(N'Lỗi: Tài khoản không hợp lệ. Tài khoản đã có người khác sử dụng hoặc không cùng loại với người dùng.', 16, 1)
+		rollback
+	END
+END
+GO
+
+-- Trigger trên bảng ADMIN
+CREATE TRIGGER TG_ADMIN_TAIKHOAN ON [ADMIN]
+FOR INSERT, UPDATE
+AS
+IF UPDATE(TenTaiKhoan)
+BEGIN
+IF EXISTS (
+		SELECT * 
+		FROM INSERTED I join [TaiKhoan] TK on (I.TenTaiKhoan = TK.TenTaiKhoan)
+		WHERE (TK.PhanLoai != 'AD') OR (I.TenTaiKhoan IN (
+			SELECT TenTaiKhoan 
+			FROM [ADMIN] AD 
+			WHERE I.TenTaiKhoan = AD.TenTaiKhoan AND I.MaAdmin != AD.MaAdmin
+		))
+	)
+	BEGIN
+		raiserror(N'Lỗi: Tài khoản không hợp lệ. Tài khoản đã có người khác sử dụng hoặc không cùng loại với người dùng.', 16, 1)
+		rollback
+	END
 END
 GO

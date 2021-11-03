@@ -1,9 +1,9 @@
 ﻿USE DB_QLDatChuyenHang
 GO
 
-exec dbo.insert_TAIKHOAN @TenTaiKhoan = 'LMD', @MatKhau = '111', @PhanLoai = 'AD';
-exec dbo.insert_TAIKHOAN @TenTaiKhoan = 'TKT', @MatKhau = '222', @PhanLoai = 'DT';
-exec dbo.insert_TAIKHOAN @TenTaiKhoan = 'TTT', @MatKhau = '333', @PhanLoai = 'KH';
+exec dbo.dangky_TAIKHOAN @TenTaiKhoan = 'LMD', @MatKhau = '111', @PhanLoai = 'AD';
+exec dbo.dangky_TAIKHOAN @TenTaiKhoan = 'TKT', @MatKhau = '222', @PhanLoai = 'DT';
+exec dbo.dangky_TAIKHOAN @TenTaiKhoan = 'TTT', @MatKhau = '333', @PhanLoai = 'KH';
 
 Select * From TaiKhoan
 Select * From KHACHHANG

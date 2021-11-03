@@ -522,6 +522,49 @@ begin tran
 commit tran
 go
 
+-- ràng buộc: mỗi đơn hàng chỉ được có các sản phẩm thuộc cùng một chi nhánh 
+-- bảng TAH:  chi tiết đơn hàng, đơn hàng
+
+--								thêm	|	xóa	|	sửa
+-- bảng đơn hàng:				-		|  -	|	+(mã chi nhánh )
+-- bảng ct đơn hàng:			+		|	-	|	+(mã đơn hàng, mã sản phẩm)
+
+-- trigger trên bảng chi tiết đơn hàng: 
+-- sản phẩm trong chi tiết đơn hàng phải có chi nhánh cùng với chi nhánh trong đơn hàng mà chứa sản phẩm đó 
+
+create trigger TG_CUNGCHINHANH_CTDONHANG on chitietdonhang
+for insert,update
+as 
+begin 
+		if exists(	select * 
+					from inserted i join SANPHAM sp on i.MaSP = sp.MaSP
+					where sp.MaChiNhanh <> (select dh.machinhanh
+											from DONHANG dh join inserted i on dh.MaDonHang = i.MaDonHang
+											)
+					)
+		begin 
+			raiserror(N'Sản phẩm không cùng chi nhánh với đơn hàng.',16,1)
+			rollback 
+		end 
+end 
+go
+
+-- trigger trên bảng đơn hàng(sửa mã chi nhánh) 
+
+create trigger TG_CUNGCHINHANH_DONHANG on donhang 
+for update 
+as 
+begin 
+		if exists(	select * 
+					from CHITIETDONHANG ct join inserted i  on i.MaDonHang = ct.MaDonHang join SANPHAM sp on ct.MaSP = sp.MaSP
+					where i.MaChiNhanh <> sp.MaChiNhanh)
+		begin 
+			raiserror (N'Sản phẩm trong đơn hàng không cùng chi nhánh với đơn hàng',16,1)
+			rollback 
+		end 
+end
+go 
+
 --insert into KHACHHANG values 
 --('0', 'Nguyễn Văn A', '0123456777', 'Quận 5 TP Hồ Chí Minh', 'Nguyenvana@gmail.com', 'customer1')
 

@@ -50,6 +50,32 @@ grant select on DonHang to Customer
 revoke select on Doitac from Customer 
 select * from DOITAC
 
+-- tạo tài khoản test role tài xế 
+exec sp_addlogin 'taixe1', '123456'
+create user taixe1 for login taixe1 
+-- tạo role tài xế 
+exec sp_addrole 'Taixe'
+exec sp_addrolemember 'Taixe', 'Taixe1'
+grant select,update on Taixe to Taixe 
+grant select on donhang to taixe
+grant update on donhang([tinhtrangvanchuyen]) to taixe
+
+revoke select on donhang from taixe 
+-- phân quyền nhân viên 
+
+exec sp_addlogin 'nhanvien1', 'nhanvien1'
+exec sp_addlogin 'nhanvien2', '123456'
+create user nhanvien1 for login nhanvien1 
+create user ttt for login nhanvien2
+exec sp_addrole 'Nhanvien' 
+exec sp_addrolemember 'Nhanvien', 'nhanvien1'
+exec sp_addrolemember 'nhanvien','ttt' 
+
+exec sp_addrolemember 'nhanvien','nhanvien2' 
+
+grant select on Hopdong to Nhanvien 
+grant update on Hopdong([PhiHoaHong],[thoigianhieuluc],[trinhtrangduyet]) to Nhanvien
+
 -- Phân quyền cho role Đối tác
 exec sp_addrole 'DoiTac'
 GRANT SELECT ON [DONHANG] TO [DOITAC] WITH GRANT OPTION

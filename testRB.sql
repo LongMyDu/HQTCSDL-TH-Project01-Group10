@@ -1,17 +1,16 @@
 ﻿USE DB_QLDatChuyenHang
 GO
 
-INSERT INTO TaiKhoan (TenTaiKhoan, MatKhau, PhanLoai)
-VALUES ('lmd', '123', 'KH')
+exec dbo.insert_TAIKHOAN @TenTaiKhoan = 'LMD', @MatKhau = '111', @PhanLoai = 'AD';
+exec dbo.insert_TAIKHOAN @TenTaiKhoan = 'TKT', @MatKhau = '222', @PhanLoai = 'DT';
+exec dbo.insert_TAIKHOAN @TenTaiKhoan = 'TTT', @MatKhau = '333', @PhanLoai = 'KH';
 
-INSERT INTO TaiKhoan (TenTaiKhoan, MatKhau, PhanLoai)
-VALUES ('pdnt', '123', 'KH')
-
-INSERT INTO TaiKhoan (TenTaiKhoan, MatKhau, PhanLoai)
-VALUES ('ttt', '123', 'KH')
-
-INSERT INTO TaiKhoan (TenTaiKhoan, MatKhau, PhanLoai)
-VALUES ('ttt2', '123', 'DT')
+Select * From TaiKhoan
+Select * From KHACHHANG
+Select * From TAIXE
+Select * From DOITAC
+Select * From NhanVien
+Select * From Admin
 
 UPDATE TaiKhoan
 Set PhanLoai = 'DT'
@@ -27,12 +26,6 @@ INSERT INTO DOITAC (MaDoiTac, TenDoiTac, TenTaiKhoan)
 VALUES (2, N'Tô Thanh Tuấn', 'ttt')
 
 
-Select * From TaiKhoan
-Select * From KHACHHANG
-Select * From TAIXE
-Select * From DOITAC
-Select * From NhanVien
-Select * From Admin
 
 UPDATE DOITAC
 SET TenTaiKhoan = 'ttt'

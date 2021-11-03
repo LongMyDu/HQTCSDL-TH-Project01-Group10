@@ -164,6 +164,7 @@ BEGIN
 	OR EXISTS (SELECT* FROM DELETED I WHERE I.[MaDonHang] = [DONHANG].[MaDonHang])
 END
 GO
+<<<<<<< HEAD
 
 -- Ràng buộc: Mỗi tài khoản chỉ được thuộc về 1 người dùng
 -- Bảng TAH:
@@ -324,3 +325,10 @@ IF EXISTS (
 	END
 END
 GO
+=======
+------
+
+
+insert into KHACHHANG values 
+('0', 'Nguyễn Văn A', '0123456777', 'Quận 5 TP Hồ Chí Minh', 'Nguyenvana@gmail.com', 'customer1')
+>>>>>>> 2f5886d034261042345b5d9daf46ef80710468b5

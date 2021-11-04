@@ -12,11 +12,22 @@ GO
 USE DB_QLDatChuyenHang
 GO
 
+CREATE TABLE [TaiKhoan] (
+  [TenTaiKhoan] varchar(20),
+  [MatKhau] varchar(20),
+  [PhanLoai] char(2),
+  [TinhTrangKhoa] bit,
+  PRIMARY KEY ([TenTaiKhoan])
+);
+
 CREATE TABLE [Admin] (
   [MaAdmin] int identity(1,1),
   [HoTen] nvarchar(30),
   [TenTaiKhoan] varchar(20),
-  PRIMARY KEY ([MaAdmin])
+  PRIMARY KEY ([MaAdmin]),
+  CONSTRAINT [FK_Admin.TenTaiKhoan]
+    FOREIGN KEY ([TenTaiKhoan])
+      REFERENCES [TaiKhoan]([TenTaiKhoan])
 );
 
 CREATE TABLE [DOITAC] (
@@ -32,18 +43,21 @@ CREATE TABLE [DOITAC] (
   [SoDT] varchar(10),
   [Email] varchar(50),
   [TenTaiKhoan] varchar(20),
-  PRIMARY KEY ([MaDoiTac])
+  PRIMARY KEY ([MaDoiTac]),
+  CONSTRAINT [FK_DOITAC.TenTaiKhoan]
+    FOREIGN KEY ([TenTaiKhoan])
+      REFERENCES [TaiKhoan]([TenTaiKhoan])
 );
 
 CREATE TABLE [HOPDONG] (
   [MaHopDong] int identity(1,1),
   [MaSoThue] varchar(10),
   [ThanhToanPhiKichHoat] bit,
-  [PhiHoaHong] int,
+  [PhiHoaHong] bigint,
   [ThoiGianHieuLuc] datetime,
   [SoChiNhanh] smallint,
   [MaDoiTac] int,
-  [TrinhTrangDuyet] bit,
+  [TinhTrangDuyet] bit,
   PRIMARY KEY ([MaHopDong]),
   CONSTRAINT [FK_HOPDONG.MaDoiTac]
     FOREIGN KEY ([MaDoiTac])
@@ -58,6 +72,7 @@ CREATE TABLE [CHINHANH] (
   CONSTRAINT [FK_CHINHANH.MaHopDong]
     FOREIGN KEY ([MaHopDong])
       REFERENCES [HOPDONG]([MaHopDong])
+	
 );
 
 CREATE TABLE [TAIXE] (
@@ -71,7 +86,10 @@ CREATE TABLE [TAIXE] (
   [Email] nvarchar(50),
   [TaiKhoanNganHang] varchar(20),
   [TenTaiKhoan] varchar(20),
-  PRIMARY KEY ([MaTaiXe])
+  PRIMARY KEY ([MaTaiXe]),
+  CONSTRAINT [FK_TAIXE.TenTaiKhoan]
+    FOREIGN KEY ([TenTaiKhoan])
+      REFERENCES [TaiKhoan]([TenTaiKhoan])
 );
 
 CREATE TABLE [KHACHHANG] (
@@ -81,14 +99,17 @@ CREATE TABLE [KHACHHANG] (
   [DiaChi] nvarchar(200),
   [Email] varchar(50),
   [TenTaiKhoan] varchar(20),
-  PRIMARY KEY ([MaKH])
+  PRIMARY KEY ([MaKH]),
+  CONSTRAINT [FK_KHACHHANG.TenTaiKhoan]
+    FOREIGN KEY ([TenTaiKhoan])
+      REFERENCES [TaiKhoan]([TenTaiKhoan])
 );
 
 CREATE TABLE [DONHANG] (
   [MaDonHang] int identity(1,1),
   [HinhThucThanhToan] nvarchar(20),
   [DiaChiGiaoHang] nvarchar(50),
-  [PhiSP] int,
+  [PhiSP] bigint,
   [PhiVC] int,
   [MaKH] int,
   [MaChiNhanh] int,
@@ -109,7 +130,7 @@ CREATE TABLE [DONHANG] (
 CREATE TABLE [SANPHAM] (
   [MaSP] int identity(1,1),
   [TenSP] nvarchar(100),
-  [Gia] int,
+  [Gia] bigint,
   [MaChiNhanh] int,
   PRIMARY KEY ([MaSP]),
   CONSTRAINT [FK_SANPHAM.MaChiNhanh]
@@ -121,7 +142,7 @@ CREATE TABLE [CHITIETDONHANG] (
   [MaSP] int,
   [MaDonHang] int,
   [SoLuong] int,
-  [Gia] int,
+  [Gia] bigint,
   PRIMARY KEY ([MaSP], [MaDonHang]),
   CONSTRAINT [FK_CHITIETDONHANG.MaSP]
     FOREIGN KEY ([MaSP])
@@ -131,19 +152,15 @@ CREATE TABLE [CHITIETDONHANG] (
       REFERENCES [DONHANG]([MaDonHang])
 );
 
-CREATE TABLE [TaiKhoan] (
-  [TenTaiKhoan] varchar(20),
-  [MatKhau] varchar(20),
-  [PhanLoai] char(2),
-  [TinhTrangKhoa] bit,
-  PRIMARY KEY ([TenTaiKhoan])
-);
 
 CREATE TABLE [NhanVien] (
   [MaNhanVien] int,
   [HoTen] nvarchar(30),
   [TenTaiKhoan] varchar(20),
-  PRIMARY KEY ([MaNhanVien])
+  PRIMARY KEY ([MaNhanVien]),
+  CONSTRAINT [FK_NHANVIEN.TenTaiKhoan]
+    FOREIGN KEY ([TenTaiKhoan])
+      REFERENCES [TaiKhoan]([TenTaiKhoan])
 );
 GO
 

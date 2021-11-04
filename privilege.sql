@@ -25,8 +25,11 @@ grant select on DoiTac(tendoitac, Thanhpho, Quan, LoaiHang,SoDT, DiaChiKinhDoanh
 grant select on Chinhanh(diachi) to Customer 
 grant select on SanPham(MaSp, Tensp, gia, machinhanh) to Customer 
 
--- Cấp quyền xem danh sách đơn hàng cho khách hàng  
-grant select on DonHang to Customer 
+-- Cấp quyền xem danh sách đơn hàng và chi tiết đơn hàng cho khách hàng  
+grant select on DonHang to Customer
+grant update on Donhang(hinhthucthanhtoan, diachigiaohang,machinhanh) to Customer 
+grant select on Chitietdonhang to Customer
+grant update on chitietdonhang(Masp, soluong) to Customer
 
 
 /*
@@ -45,7 +48,7 @@ NHANVIEN
 -- Phân quyền nhân viên
 exec sp_addrole 'Nhanvien' 
 grant select on Hopdong to Nhanvien 
-grant update on Hopdong([PhiHoaHong],[thoigianhieuluc],[trinhtrangduyet]) to Nhanvien
+grant update on Hopdong([PhiHoaHong],[thoigianhieuluc],[tinhtrangduyet]) to Nhanvien
 
 
 /*

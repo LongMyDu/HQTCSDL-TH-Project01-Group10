@@ -581,7 +581,3 @@ begin
 		end 
 end
 go 
-
---insert into KHACHHANG values 
---('0', 'Nguyễn Văn A', '0123456777', 'Quận 5 TP Hồ Chí Minh', 'Nguyenvana@gmail.com', 'customer1')
-

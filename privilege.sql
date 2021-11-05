@@ -7,7 +7,7 @@ ADMIN
 exec sp_addrole 'Admin'
 GRANT SELECT, INSERT, UPDATE, DELETE ON NhanVien TO Admin WITH GRANT OPTION
 GRANT SELECT, INSERT, UPDATE, DELETE ON [Admin] TO Admin WITH GRANT OPTION
-GRANT SELECT, UPDATE ON TaiKhoan TO Admin WITH GRANT OPTION 
+GRANT SELECT, INSERT, UPDATE, DELETE ON TaiKhoan TO Admin WITH GRANT OPTION 
 -- Tạo tài khoản login và user cho Admin
 exec sp_addlogin 'lg_admin', 'admin123'
 Create user us_admin For login lg_admin

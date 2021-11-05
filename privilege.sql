@@ -18,27 +18,27 @@ exec sp_addrolemember 'Admin','us_admin'
 KHACHHANG 
 */
 -- Tạo role khách hàng 
-exec sp_addrole 'Customer' 
+exec sp_addrole 'KhachHang' 
 
 -- Cấp quyền xem và sửa thông tin cho role khách hàng
-grant select on KhachHang to Customer  
-grant update on KhachHang(Hoten, sodt, diachi, email) to Customer
+grant select on KhachHang to KhachHang
+grant update on KhachHang(Hoten, sodt, diachi, email) to KhachHang
 
 -- Cấp quyền xem danh sách đối tác chi nhánh, sản phẩm cho khách hàng
-grant select on DoiTac(tendoitac, Thanhpho, Quan, LoaiHang,SoDT, DiaChiKinhDoanh) to Customer
-grant select on Chinhanh(diachi) to Customer 
-grant select on SanPham(MaSp, Tensp, gia, machinhanh) to Customer 
+grant select on DoiTac(tendoitac, Thanhpho, Quan, LoaiHang,SoDT, DiaChiKinhDoanh) to KhachHang
+grant select on Chinhanh(diachi) to KhachHang
+grant select on SanPham(MaSp, Tensp, gia, machinhanh) to KhachHang
 
 -- Cấp quyền xem danh sách đơn hàng và chi tiết đơn hàng cho khách hàng  
-grant select on DonHang to Customer
-grant update on Donhang(hinhthucthanhtoan, diachigiaohang,machinhanh) to Customer 
-grant select on Chitietdonhang to Customer
-grant update on chitietdonhang(Masp, soluong) to Customer
+grant select, insert, delete on DonHang to KhachHang
+grant update on Donhang(hinhthucthanhtoan, diachigiaohang,machinhanh) to KhachHang
+grant select, insert, delete on Chitietdonhang to KhachHang
+grant update on chitietdonhang(Masp, soluong) to KhachHang
 
 -- Tạo tài khoản login và user cho khách hàng
 exec sp_addlogin 'lg_khachhang', 'khachhang123'
 Create user us_khachhang For login lg_khachhang
-exec sp_addrolemember 'Customer','us_khachhang'
+exec sp_addrolemember 'KhachHang','us_khachhang'
 
 /*
 TAIXE
@@ -48,6 +48,7 @@ exec sp_addrole 'Taixe'
 grant select,update on Taixe to Taixe 
 grant select on donhang to taixe
 grant update on donhang([tinhtrangvanchuyen]) to taixe
+grant select on khachhang to taixe
 -- Tạo tài khoản login và user cho tài xế
 exec sp_addlogin 'lg_taixe', 'taixe123'
 Create user us_taixe For login lg_taixe
@@ -93,3 +94,7 @@ GRANT SELECT, UPDATE ON [DOITAC] TO [DOITAC]
 exec sp_addlogin 'lg_doitac', 'doitac123'
 Create user us_doitac For login lg_doitac
 exec sp_addrolemember 'DoiTac','us_doitac'
+
+grant select, update on [TaiKhoan]([TenTaiKhoan]) to KhachHang, TaiXe, NhanVien, DoiTac
+grant update on [TaiKhoan]([MatKhau]) to KhachHang, TaiXe, NhanVien, DoiTac
+grant select on [TaiKhoan]([TinhTrangKhoa]) to KhachHang, TaiXe, NhanVien, DoiTac

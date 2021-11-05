@@ -70,10 +70,25 @@ DOITAC
 */
 -- Phân quyền cho role Đối tác
 exec sp_addrole 'DoiTac'
+
+-- Xem, cập nhật tình trạng vận chuyển đơn hàng
 GRANT SELECT ON [DONHANG] TO [DOITAC] 
+GRANT SELECT ON [CHITIETDONHANG] TO [DOITAC]
 GRANT UPDATE ON [DONHANG]([TinhTrangVanChuyen]) TO [DOITAC]
+
+-- Xem, thêm hợp đồng
 GRANT SELECT, INSERT ON [HOPDONG] TO [DOITAC] 
+
+-- Xem, thêm, xóa, sửa chi nhánh
+GRANT SELECT, INSERT, DELETE ON [CHINHANH] TO [DOITAC]
+GRANT UPDATE ON [CHINHANH]([DiaChi]) TO [DOITAC]
+
+-- Xem, xóa, sửa sản phẩm
 GRANT SELECT, INSERT, UPDATE, DELETE ON [SANPHAM] TO [DOITAC]
+
+-- Xem, sửa thông tin đối tác
+GRANT SELECT, UPDATE ON [DOITAC] TO [DOITAC]
+
 -- Tạo tài khoản login và user cho đối tác
 exec sp_addlogin 'lg_doitac', 'doitac123'
 Create user us_doitac For login lg_doitac

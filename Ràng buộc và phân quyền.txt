@@ -10,7 +10,7 @@ Quyền:
 	Xem, thêm hợp đồng
 	Xem, xóa, sửa sản phẩm
 	Xem, sửa thông tin đối tác
-
+	Xem, thêm, xóa, sửa chi nhánh
 
 Khách hàng
 	Xem, Thêm đơn đặt hàng (xem của người đó)

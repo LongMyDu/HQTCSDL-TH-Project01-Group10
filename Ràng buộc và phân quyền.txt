@@ -5,6 +5,9 @@ Ràng buộc:
 	Phí sản phẩm(DonHang) = tổng( số lượng * đơn giá (CTDH))
 
 Quyền:
+	Xem, sửa tên tài khoản
+	Sửa mật khẩu
+	Xem tình trạng khóa
 Đối tác:
 	Xem, cập nhật tình trạng vận chuyển đơn hàng
 	Xem, thêm hợp đồng
@@ -14,13 +17,14 @@ Quyền:
 	Xem, thêm, xóa, sửa chi nhánh
 
 Khách hàng
-	Xem, Thêm đơn đặt hàng (xem của người đó)
+	Xem, Thêm, xóa, sửa đơn đặt hàng, ctdh
 	Xem danh sách đối tác, chi nhánh, sản phẩm
 	Xem, sửa thông tin khách hàng 
 
 Tài xế
 	Xem, cập nhật tình trạng vận chuyển đơn hàng
 	Xem, sửa thông tin tài xế
+	Xem khách hàng
 
 Nhân viên
 	Xem, cập nhật tình trạng duyệt hợp đồng

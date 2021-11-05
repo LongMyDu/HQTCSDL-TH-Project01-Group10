@@ -14,7 +14,6 @@ Quyền:
 	Xem, thêm, xóa, sửa chi nhánh
 	Xem, xóa, sửa sản phẩm
 	Xem, sửa thông tin đối tác
-	Xem, thêm, xóa, sửa chi nhánh
 
 Khách hàng
 	Xem, Thêm, xóa, sửa đơn đặt hàng, ctdh

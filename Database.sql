@@ -107,6 +107,7 @@ CREATE TABLE [KHACHHANG] (
 
 CREATE TABLE [DONHANG] (
   [MaDonHang] int identity(1,1),
+  [NgayLap] datetime,
   [HinhThucThanhToan] nvarchar(20),
   [DiaChiGiaoHang] nvarchar(50),
   [PhiSP] bigint,
@@ -131,6 +132,7 @@ CREATE TABLE [SANPHAM] (
   [MaSP] int identity(1,1),
   [TenSP] nvarchar(100),
   [Gia] bigint,
+  [SoLuongTon] int,
   [MaChiNhanh] int,
   PRIMARY KEY ([MaSP]),
   CONSTRAINT [FK_SANPHAM.MaChiNhanh]

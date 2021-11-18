@@ -1,6 +1,21 @@
 ﻿use DB_QLDatChuyenHang
 GO
 
+/*
+Danh sách các procedure đã tồn tại:
+	1. dangky_TAIKHOAN
+	2. huy_TAIKHOAN
+	3. capnhat_TAIKHOAN_PhanLoai
+	4. CapNhat_SANPHAM_gia
+	5. Them_SANPHAM
+	6. Them_DONHANG
+	7. CapNhat_SANPHAM_GiamGiaDongLoat
+	8. XemTatCa_SANPHAM_ThuocChiNhanh
+	9. XemTatCa_DONHANG_ThuocChiNhanh
+	10. CapNhat_SANPHAM_GiamGiaCoDieuKien: Procedure giảm giá X% của một sản phẩm nếu giá của sản phẩm đó dưới Y
+*/
+
+
 create procedure dangky_TAIKHOAN
 (
 	@TenTaiKhoan varchar(20),
@@ -105,7 +120,7 @@ begin tran
 				delete from Admin where [TenTaiKhoan] = @TenTaiKhoan
 			end
 commit tran
-go
+GO
 
 create procedure capnhat_TAIKHOAN_PhanLoai
 (
@@ -227,7 +242,6 @@ begin tran
 	end
 GO
 
-
 -- Procedure Thêm sản phẩm mới
 create procedure Them_SANPHAM
 (
@@ -251,7 +265,6 @@ begin tran
 		commit tran
 	end
 GO
-
 
 -- Procedure giảm giá lượng phần trăm X cho tất cả sản phẩm được cung cấp bởi một chi nhánh Y
 create procedure CapNhat_SANPHAM_GiamGiaDongLoat
@@ -292,7 +305,6 @@ begin tran
 	else
 		commit tran
 GO
-
 
 --Procedure xem tất cả sản phẩm của chi nhánh X
 create procedure XemTatCa_SANPHAM_ThuocChiNhanh
@@ -372,4 +384,54 @@ begin tran
 	insert into DONHANG (HinhThucThanhToan, DiaChiGiaoHang, PhiVC, MaKH, MaChiNhanh, TinhTrangVanChuyen)
 	values (@HinhThucThanhToan, @DiaChiGiaoHang, @PhiVC, @MaKH, @MaChiNhanh, N'Chờ xác nhận')
 	commit tran
+GO
+
+--Procedure giảm giá X% của một sản phẩm nếu giá của sản phẩm đó dưới Y
+create procedure CapNhat_SANPHAM_GiamGiaCoDieuKien
+(
+	@MaSP int,
+	@MucGiaToiDa bigint,
+	@PhanTramGiamGia int
+)
+as
+begin tran
+	if not exists 
+	(
+		select *
+		from SANPHAM SP
+		where SP.MaSP = @MaSP
+	)
+	begin
+		raiserror('Không tìm thấy sản phẩm.', 16, 1)
+		rollback tran
+	end
+
+	else if @MucGiaToiDa < 0
+	begin
+		raiserror('Mức giá tối đa của sản phẩm không hợp lệ.', 16, 1)
+		rollback tran
+	end
+
+	else
+	begin
+		Declare @GiaHienTai bigint
+		Set @GiaHienTai = (Select Gia From SanPham Where MaSP = @MaSP)
+
+		if (@GiaHienTai < @MucGiaToiDa)
+		begin
+			Declare @GiaChuaGiam bigint
+			Set @GiaChuaGiam = (Select Gia From SanPham Where MaSP = @MaSP)
+
+			Declare @GiaDaGiam bigint
+			Set @GiaDaGiam = CAST(@GiaChuaGiam * (100 - @PhanTramGiamGia) / 100 as bigint)
+
+			update SANPHAM 
+			set Gia = @GiaDaGiam
+			where MaSP = @MaSP
+
+			commit tran
+		end
+		else
+			rollback tran
+	end
 GO

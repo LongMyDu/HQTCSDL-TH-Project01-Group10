@@ -105,7 +105,7 @@ exec them_SANPHAM N'Thùng 20 gói Mì Rong Biển Ottogi 120gx20',247000,1
 exec them_SANPHAM N'Mì Trộn Xốt Tương Đen Hàn Quốc Ottogi 135Gr', 36400, 1
 
 
-exec capnhat_SANPHAM_gia 4, 250000
+exec capnhat_SANPHAM_gia 1, 450000
 exec capnhat_SANPHAM_GiamGiaDongLoat 1, 10
 
 exec XemTatCa_SANPHAM_ThuocChiNhanh 1

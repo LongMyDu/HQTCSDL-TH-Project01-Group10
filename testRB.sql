@@ -76,3 +76,41 @@ exec sp_addrolemember 'Customer','customer1'
 
 --revoke select on donhang from taixe
 --revoke select on Doitac from Customer  
+
+-- Thêm tài khoản
+INSERT INTO TAIKHOAN (TenTaiKhoan, MatKhau, PhanLoai)
+VALUES	('longmydu', 'dumylong', 'KH'),
+		('duynguyen', 'nguyenduy', 'KH')
+
+-- Thêm chi nhánh
+INSERT INTO CHINHANH (DiaChi)
+VALUES (N'45 Hải Biên, Q.1'),
+	(N'93 Nguyễn Văn cừ, Q.5')
+
+
+-- Thêm khách hàng
+INSERT INTO KHACHHANG (HoTen, DiaChi, TenTaiKhoan)
+VALUES	(N'Long Mỹ Du', '329 Đường 3/2, Q.5', 'longmydu'),
+		(N'Nguyễn Huỳnh Khánh Duy', '43 Nguyễn Thị Minh Khai, Q.1', 'duynguyen')
+
+
+-- Test procedure capnhat_taikhoan_gia
+select * from sanpham
+select * from donhang
+delete SANPHAM
+
+
+exec them_SANPHAM N'Khô Heo Cháy Tỏi DTFood Đặc Biệt Thơm Ngon', 85000,1
+exec them_SANPHAM N'Thùng 20 gói Mì Rong Biển Ottogi 120gx20',247000,1
+exec them_SANPHAM N'Mì Trộn Xốt Tương Đen Hàn Quốc Ottogi 135Gr', 36400, 1
+
+
+exec capnhat_SANPHAM_gia 4, 250000
+exec capnhat_SANPHAM_GiamGiaDongLoat 1, 10
+
+exec XemTatCa_SANPHAM_ThuocChiNhanh 1
+
+
+
+exec Them_DONHANG N'Tiền mặt', N'182 Nguyễn Huệ, Q.1', 20000, 1, 1
+exec XemTatCa_DONHANG_ThuocChiNhanh 1, N'Chờ xác nhận'

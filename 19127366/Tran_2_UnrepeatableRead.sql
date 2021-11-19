@@ -1,7 +1,9 @@
-﻿use DB_QLDatChuyenHang
+﻿-- Lỗi: Unrepeatable Read
+-- Transaction 2: Thay đổi giá của sản phẩm 1 thành 550000.
+
+use DB_QLDatChuyenHang
 GO
 
--- Thay đổi giá của sản phẩm 1 thành 550000
 begin tran
 	declare @MaSP int, @GiaMoi bigint
 	select @MaSP = 1, @GiaMoi = 550000
@@ -26,6 +28,5 @@ begin tran
 			set [Gia] = @GiaMoi
 			where [MaSP] = @MaSP
 
-			Print(N'Cập nhật giá sản phẩm thành công')
 			commit tran
 		end

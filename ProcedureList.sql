@@ -247,6 +247,7 @@ create procedure Them_SANPHAM
 (
 	@TenSP nvarchar(100),
 	@Gia bigint,
+	@SoLuongTon int = NULL,
 	@MaChiNhanh int = NULL
 )
 as
@@ -260,8 +261,8 @@ begin tran
 	end
 	else
 	begin
-		insert into SANPHAM (TenSP, Gia, MaChiNhanh)
-		values (@TenSP, @Gia, @MaChiNhanh)
+		insert into SANPHAM (TenSP, Gia, SoLuongTon, MaChiNhanh)
+		values (@TenSP, @Gia, @SoLuongTon, @MaChiNhanh)
 		commit tran
 	end
 GO
@@ -275,11 +276,11 @@ create procedure CapNhat_SANPHAM_GiamGiaDongLoat
 as
 begin tran
 	if @MaChiNhanh != NULL and not exists 
-		(
-			select *
-			from CHINHANH CN
-			where CN.MaChiNhanh = @MaChiNhanh
-		)
+	(
+		select *
+		from CHINHANH CN
+		where CN.MaChiNhanh = @MaChiNhanh
+	)
 	begin
 		raiserror('Không tìm thấy chi nhánh.', 16, 1);
 		rollback tran
@@ -314,11 +315,11 @@ create procedure XemTatCa_SANPHAM_ThuocChiNhanh
 as
 begin tran
 	if @MaChiNhanh != NULL and not exists 
-		(
-			select *
-			from CHINHANH CN
-			where CN.MaChiNhanh = @MaChiNhanh
-		)
+	(
+		select *
+		from CHINHANH CN
+		where CN.MaChiNhanh = @MaChiNhanh
+	)
 	begin
 		raiserror('Không tìm thấy chi nhánh.', 16, 1);
 		rollback tran
@@ -341,11 +342,11 @@ create procedure XemTatCa_DONHANG_ThuocChiNhanh
 as
 begin tran
 	if @MaChiNhanh != NULL and not exists 
-		(
-			select *
-			from CHINHANH CN
-			where CN.MaChiNhanh = @MaChiNhanh
-		)
+	(
+		select *
+		from CHINHANH CN
+		where CN.MaChiNhanh = @MaChiNhanh
+	)
 	begin
 		raiserror('Không tìm thấy chi nhánh.', 16, 1);
 		rollback tran
@@ -375,14 +376,15 @@ create procedure Them_DONHANG
 	@DiaChiGiaoHang nvarchar(50),
 	@PhiVC int,
 	@MaKH int,
-	@MaChiNhanh int
+	@MaChiNhanh int,
+	@NgayLap datetime
 )
 as
 begin tran
 	-- !!!Không cần kiểm tra MaKH và MaChiNhanh vì đã có Foreign Key Constraint
 
-	insert into DONHANG (HinhThucThanhToan, DiaChiGiaoHang, PhiVC, MaKH, MaChiNhanh, TinhTrangVanChuyen)
-	values (@HinhThucThanhToan, @DiaChiGiaoHang, @PhiVC, @MaKH, @MaChiNhanh, N'Chờ xác nhận')
+	insert into DONHANG (HinhThucThanhToan, DiaChiGiaoHang, PhiVC, MaKH, MaChiNhanh, NgayLap, TinhTrangVanChuyen)
+	values (@HinhThucThanhToan, @DiaChiGiaoHang, @PhiVC, @MaKH, @MaChiNhanh, @NgayLap, N'Chờ xác nhận')
 	commit tran
 GO
 

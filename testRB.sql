@@ -97,12 +97,14 @@ VALUES	(N'Long Mỹ Du', '329 Đường 3/2, Q.5', 'longmydu'),
 -- Test procedure capnhat_taikhoan_gia
 select * from sanpham
 select * from donhang
+select * from CHINHANH
 delete SANPHAM
+Delete DONHANG
 
-
-exec them_SANPHAM N'Khô Heo Cháy Tỏi DTFood Đặc Biệt Thơm Ngon', 85000,1
-exec them_SANPHAM N'Thùng 20 gói Mì Rong Biển Ottogi 120gx20',247000,1
-exec them_SANPHAM N'Mì Trộn Xốt Tương Đen Hàn Quốc Ottogi 135Gr', 36400, 1
+exec them_SANPHAM N'Hạt hạnh nhân hữu cơ 1kg', 450000, 100, 1
+exec them_SANPHAM N'Khô Heo Cháy Tỏi DTFood Đặc Biệt Thơm Ngon', 85000, 100, 1
+exec them_SANPHAM N'Thùng 20 gói Mì Rong Biển Ottogi 120gx20',250000, 200, 1
+exec them_SANPHAM N'Mì Trộn Xốt Tương Đen Hàn Quốc Ottogi 135Gr', 35000, 50, 1
 
 
 exec capnhat_SANPHAM_gia 1, 450000
@@ -112,5 +114,7 @@ exec XemTatCa_SANPHAM_ThuocChiNhanh 1
 
 
 
-exec Them_DONHANG N'Tiền mặt', N'182 Nguyễn Huệ, Q.1', 20000, 1, 1
+exec Them_DONHANG N'Tiền mặt', N'182 Nguyễn Huệ, Q.1', 20000, 1, 1, '10/21/2021'
+exec Them_DONHANG N'MoMo', N'64 Hàn Hải Nguyên, Q.11', 20000, 2, 1, '10/3/2021'
+
 exec XemTatCa_DONHANG_ThuocChiNhanh 1, N'Chờ xác nhận'

@@ -21,7 +21,7 @@ CREATE TABLE [TaiKhoan] (
 );
 
 CREATE TABLE [Admin] (
-  [MaAdmin] int identity(1,1),
+  [MaAdmin] int,
   [HoTen] nvarchar(30),
   [TenTaiKhoan] varchar(20),
   PRIMARY KEY ([MaAdmin]),
@@ -31,7 +31,7 @@ CREATE TABLE [Admin] (
 );
 
 CREATE TABLE [DOITAC] (
-  [MaDoiTac] int identity(1,1),
+  [MaDoiTac] int,
   [TenDoiTac] nvarchar(30),
   [NguoiDaiDien] nvarchar(30),
   [ThanhPho] nvarchar(15),
@@ -50,7 +50,7 @@ CREATE TABLE [DOITAC] (
 );
 
 CREATE TABLE [HOPDONG] (
-  [MaHopDong] int identity(1,1),
+  [MaHopDong] int,
   [MaSoThue] varchar(10),
   [ThanhToanPhiKichHoat] bit,
   [PhiHoaHong] bigint,
@@ -65,7 +65,7 @@ CREATE TABLE [HOPDONG] (
 );
 
 CREATE TABLE [CHINHANH] (
-  [MaChiNhanh] int identity(1,1),
+  [MaChiNhanh] int,
   [DiaChi] nvarchar(200),
   [MaHopDong] int,
   PRIMARY KEY ([MaChiNhanh]),
@@ -76,7 +76,7 @@ CREATE TABLE [CHINHANH] (
 );
 
 CREATE TABLE [TAIXE] (
-  [MaTaiXe] int identity(1,1),
+  [MaTaiXe] int,
   [HoTen] nvarchar(30),
   [CMND] varchar(12),
   [SoDT] nvarchar(10),
@@ -93,7 +93,7 @@ CREATE TABLE [TAIXE] (
 );
 
 CREATE TABLE [KHACHHANG] (
-  [MaKH] int identity(1,1),
+  [MaKH] int,
   [HoTen] nvarchar(30),
   [SoDT] varchar(10),
   [DiaChi] nvarchar(200),
@@ -106,7 +106,7 @@ CREATE TABLE [KHACHHANG] (
 );
 
 CREATE TABLE [DONHANG] (
-  [MaDonHang] int identity(1,1),
+  [MaDonHang] int,
   [NgayLap] datetime,
   [HinhThucThanhToan] nvarchar(20),
   [DiaChiGiaoHang] nvarchar(50),
@@ -129,7 +129,7 @@ CREATE TABLE [DONHANG] (
 );
 
 CREATE TABLE [SANPHAM] (
-  [MaSP] int identity(1,1),
+  [MaSP] int,
   [TenSP] nvarchar(100),
   [Gia] bigint,
   [SoLuongTon] int,

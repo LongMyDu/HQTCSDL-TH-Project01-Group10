@@ -1,28 +1,58 @@
 ﻿use DB_QLDatChuyenHang
 GO
 
--- Thêm tài khoản
-INSERT INTO TAIKHOAN (TenTaiKhoan, MatKhau, PhanLoai)
-VALUES	('longmydu', 'dumylong', 'KH'),
-		('duynguyen', 'nguyenduy', 'KH')
+-- Transaction 1: Xem tất cả đơn hàng thuộc chi nhánh 1 trong tình trạng “Chờ xác nhận”.
+create procedure XemTatCa_DONHANG_ThuocChiNhanh
+(
+	@MaChiNhanh int,
+	@TinhTrang nvarchar(50)
+)
+as
+begin tran
+	SET TRAN ISOLATION LEVEL REPEATABLE READ
+	if @MaChiNhanh != NULL and not exists 
+	(
+		select *
+		from CHINHANH CN
+		where CN.MaChiNhanh = @MaChiNhanh
+	)
+	begin
+		raiserror('Không tìm thấy chi nhánh.', 16, 1);
+		rollback tran
+	end
+	else 
+	begin
+		Declare @SoDonHangChoXacNhan int
+		Set @SoDonHangChoXacNhan = (
+			Select count(*)
+			From DONHANG
+			Where MaChiNhanh = @MaChiNhanh and TinhTrangVanChuyen = @TinhTrang
+		)
+		
+		Print N'Tổng số đơn hàng trong tình trạng "' + @TinhTrang + '": ' + CAST(@SoDonHangChoXacNhan AS VARCHAR(10))
+		WAITFOR DELAY '00:00:10'
+
+		Select *
+		From DONHANG
+		Where MaChiNhanh = @MaChiNhanh and TinhTrangVanChuyen = @TinhTrang
+		commit tran
+	end
 
 GO
 
--- Thêm khách hàng
-INSERT INTO KHACHHANG (HoTen, DiaChi, TenTaiKhoan)
-VALUES	(N'Long Mỹ Du', '329 Đường 3/2, Q.5', 'longmydu'),
-		(N'Nguyễn Huỳnh Khánh Duy', '43 Nguyễn Thị Minh Khai, Q.1', 'duynguyen')
-
-GO
-
--- Thêm chi nhánh
-INSERT INTO CHINHANH (DiaChi)
-VALUES (N'45 Hải Biên, Q.1'),
-	(N'93 Nguyễn Văn cừ, Q.5')
-
-GO
-
--- Thêm đơn hàng
-INSERT INTO DONHANG (HinhThucThanhToan, DiaChiGiaoHang, PhiVC, MaKH, MaChiNhanh, NgayLap, TinhTrangVanChuyen)
-VALUES	(N'Tiền mặt', N'182 Nguyễn Huệ, Q.1', 20000, 1, 1, '10/21/2021', N'Chờ xác nhận'),
-		(N'MoMo', N'64 Hàn Hải Nguyên, Q.11', 20000, 2, 1, '10/3/2021', N'Chờ xác nhận')
+-- Transaction 2: Thêm đơn hàng mới thuộc chi nhánh 1.
+create procedure Them_DONHANG
+(
+	@HinhThucThanhToan nvarchar(20),
+	@DiaChiGiaoHang nvarchar(50),
+	@PhiVC int,
+	@MaKH int,
+	@MaChiNhanh int,
+	@NgayLap datetime
+)
+as
+begin tran
+	-- !!!Không cần kiểm tra MaKH và MaChiNhanh vì đã có Foreign Key Constraint
+	insert into DONHANG (MaDonHang, HinhThucThanhToan, DiaChiGiaoHang, PhiVC, MaKH, MaChiNhanh, NgayLap, TinhTrangVanChuyen)
+	values (3, @HinhThucThanhToan, @DiaChiGiaoHang, @PhiVC, @MaKH, @MaChiNhanh, @NgayLap, N'Chờ xác nhận')
+	commit tran

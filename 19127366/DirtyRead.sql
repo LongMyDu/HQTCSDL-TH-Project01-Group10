@@ -1,20 +1,67 @@
 ﻿use DB_QLDatChuyenHang
 GO
 
+-- Transaction 1: : Giảm giá 120% cho tất cả sản phẩm được cung cấp bởi chi nhánh 1.
+create procedure CapNhat_SANPHAM_GiamGiaDongLoat
+(
+	@MaChiNhanh int,
+	@PhanTramGiamGia int = 0
+)
+as
+begin tran
+	if @MaChiNhanh != NULL and not exists 
+	(
+		select *
+		from CHINHANH CN
+		where CN.MaChiNhanh = @MaChiNhanh
+	)
+	begin
+		raiserror('Không tìm thấy chi nhánh.', 16, 1);
+		rollback tran
+	end
+	
+	else 
 
--- Thêm chi nhánh
-INSERT INTO CHINHANH (DiaChi)
-VALUES (N'45 Hải Biên, Q.1'),
-	(N'93 Nguyễn Văn cừ, Q.5')
+	begin
+		update SANPHAM 
+		set Gia = convert(bigint, Gia * (100 - @PhanTramGiamGia) /100)
+		where MaChiNhanh = @MaChiNhanh
+		WAITFOR DELAY '00:00:10'
+	end
+	
+	if @PhanTramGiamGia > 100
+	begin
+		raiserror('Phần trăm giảm giá không hợp lệ', 16, 1);
+		rollback tran
+	end
+	else
+		commit tran
 
 GO
 
--- Thêm sản phẩm
-Delete SANPHAM
-GO
-
-INSERT INTO SANPHAM (TenSP, Gia, SoLuongTon, MaChiNhanh)
-VALUES	(N'Hạt hạnh nhân hữu cơ 1kg', 450000, 100, 1),
-		(N'Khô Heo Cháy Tỏi DTFood Đặc Biệt Thơm Ngon', 85000, 100, 1),
-		(N'Thùng 20 gói Mì Rong Biển Ottogi 120gx20',250000, 200, 1),
-		(N'Mì Trộn Xốt Tương Đen Hàn Quốc Ottogi 135Gr', 35000, 50, 1)
+-- Transaction 2: : Đọc thông tin các sản phẩm được cung cấp bởi chi nhánh 1.
+create procedure XemTatCa_SANPHAM_ThuocChiNhanh
+(
+	@MaChiNhanh int
+)
+as
+begin tran
+	
+	SET TRAN ISOLATION LEVEL READ UNCOMMITTED		
+	if @MaChiNhanh != NULL and not exists 
+	(
+		select *
+		from CHINHANH CN
+		where CN.MaChiNhanh = @MaChiNhanh
+	)
+	begin
+		raiserror('Không tìm thấy chi nhánh.', 16, 1);
+		rollback tran
+	end
+	else 
+	begin
+		Select *
+		From SANPHAM
+		Where MaChiNhanh = @MaChiNhanh
+		commit tran
+	end

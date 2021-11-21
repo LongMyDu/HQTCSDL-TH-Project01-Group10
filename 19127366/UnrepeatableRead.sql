@@ -1,18 +1,88 @@
 ﻿use DB_QLDatChuyenHang
 GO
 
+-- Transaction 1: Giảm giá 20% sản phẩm 1 nếu giá sản phẩm này dưới 500.000.
+create procedure CapNhat_SANPHAM_GiamGiaCoDieuKien
+(
+	@MaSP int,
+	@MucGiaToiDa bigint,
+	@PhanTramGiamGia int
+)
+as
+begin tran
+	SET TRAN ISOLATION LEVEL READ UNCOMMITTED
+	if not exists 
+	(
+		select *
+		from SANPHAM SP
+		where SP.MaSP = @MaSP
+	)
+	begin
+		raiserror('Không tìm thấy sản phẩm.', 16, 1)
+		rollback tran
+	end
 
--- Thêm chi nhánh
-INSERT INTO CHINHANH (DiaChi)
-VALUES (N'45 Hải Biên, Q.1'),
-	(N'93 Nguyễn Văn cừ, Q.5')
+	else if @MucGiaToiDa < 0
+	begin
+		raiserror('Mức giá tối đa của sản phẩm không hợp lệ.', 16, 1)
+		rollback tran
+	end
+
+	else
+	begin
+		Declare @GiaHienTai bigint
+		Set @GiaHienTai = (Select Gia From SanPham Where MaSP = @MaSP)
+		Print(N'Giá của sản phẩm 1 ở lần đọc 1: ' + CAST(@GiaHienTai as nvarchar(10)))
+
+		WAITFOR DELAY '00:00:10'
+		if (@GiaHienTai < @MucGiaToiDa)
+		begin
+			Declare @GiaChuaGiam bigint
+			Set @GiaChuaGiam = (Select Gia From SanPham Where MaSP = @MaSP)
+			Print(N'Giá của sản phẩm 1 ở lần đọc 2: ' + CAST(@GiaChuaGiam as nvarchar(10)))
+
+			Declare @GiaDaGiam bigint
+			Set @GiaDaGiam = CAST(@GiaChuaGiam * (100 - @PhanTramGiamGia) / 100 as bigint)
+
+			update SANPHAM 
+			set Gia = @GiaDaGiam
+			where MaSP = @MaSP
+
+			commit tran
+		end
+		else
+			rollback tran
+	end
 
 GO
 
--- Thêm sản phẩm
-INSERT INTO SANPHAM (TenSP, Gia, SoLuongTon, MaChiNhanh)
-VALUES	(N'Hạt hạnh nhân hữu cơ 1kg', 450000, 100, 1),
-		(N'Khô Heo Cháy Tỏi DTFood Đặc Biệt Thơm Ngon', 85000, 100, 1),
-		(N'Thùng 20 gói Mì Rong Biển Ottogi 120gx20',250000, 200, 1),
-		(N'Mì Trộn Xốt Tương Đen Hàn Quốc Ottogi 135Gr', 35000, 50, 1)
+-- Transaction 2: Thay đổi giá của sản phẩm 1 thành 550000.
+create procedure CapNhat_SANPHAM_gia
+(
+	@MaSP int,
+	@GiaMoi bigint
+)
+as
+begin tran
+	if not exists 
+		(
+			select*
+			from SANPHAM SP
+			where SP.MaSP = @MaSP
+		)
+		begin
+			raiserror('Không tìm thấy sản phẩm.', 16, 1)
+			rollback tran
+		end
+		else if @GiaMoi < 0
+		begin
+			raiserror('Giá sản phẩm không hợp lệ.', 16, 1)
+			rollback tran
+		end
+		begin
+			update SANPHAM
+			set [Gia] = @GiaMoi
+			where [MaSP] = @MaSP
 
+			commit tran
+		end

@@ -13,6 +13,8 @@ Danh sách các procedure đã tồn tại:
 	8. XemTatCa_SANPHAM_ThuocChiNhanh
 	9. XemTatCa_DONHANG_ThuocChiNhanh
 	10. CapNhat_SANPHAM_GiamGiaCoDieuKien: Procedure giảm giá X% của một sản phẩm nếu giá của sản phẩm đó dưới Y
+	11. Ban_SanPham_SoLuong: Bán số lượng x sản phẩm y
+	12. Them_SanPham_SoLuong: Thêm số lượng x sản phẩm y
 */
 
 
@@ -297,12 +299,12 @@ begin tran
 		where MaChiNhanh = @MaChiNhanh
 		
 	end
-	
+		
 	if @PhanTramGiamGia > 100
 	begin
 		raiserror('Phần trăm giảm giá không hợp lệ', 16, 1);
 		rollback tran
-	end
+	end			
 	else
 		commit tran
 GO
@@ -437,3 +439,86 @@ begin tran
 			rollback tran
 	end
 GO
+
+--Procedure Bán số lượng x sản phẩm y
+Create procedure Ban_SanPham_SoLuong
+(
+	@masp int,
+	@soluongban int
+)
+as
+Begin Tran
+	Declare @soluongton int
+
+	if not exists
+	(
+		select *
+		from SANPHAM SP
+		where SP.MaSP = @masp
+	)
+	Begin
+		Raiserror('Không tồn tại sản phẩm này.', 16, 1)
+		Rollback tran
+	End
+
+	else
+	Begin
+		Set @soluongton =(select SoLuongTon
+							from SANPHAM where MaSP = @masp)
+
+		Set @soluongton = @soluongton - @soluongban
+
+		Update SANPHAM
+		Set SoLuongTon = @soluongton
+		Where MaSP = @masp
+
+		if exists
+		(
+			select *
+			from SANPHAM SP
+			where SP.MaSP = @masp and SP.SoLuongTon < 0
+		)
+		Begin
+			Raiserror('Sản phẩm không đủ số lượng.', 16, 1)
+			Rollback Tran
+		End
+
+	End
+Commit Tran
+Go
+
+--Procedure Thêm số lượng x sản phẩm y
+Create procedure Them_SanPham_SoLuong
+(
+	@masp int,
+	@soluongthem int
+)
+as
+
+Begin Tran
+	Declare @soluongton int
+
+	if not exists
+	(
+		select *
+		from SANPHAM SP
+		where SP.MaSP = @masp
+	)
+	Begin
+		Raiserror('Không tồn tại sản phẩm này.', 16, 1)
+		Rollback tran
+	End
+
+	else
+	Begin
+		Select @soluongton =(select SoLuongTon
+							from SANPHAM where MaSP = @masp)
+
+		Set @soluongton = @soluongton + @soluongthem
+		
+		Update SANPHAM
+		Set SoLuongTon = @soluongton
+		Where MaSP = @masp
+	End
+Commit Tran
+Go			

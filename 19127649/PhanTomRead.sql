@@ -1,4 +1,6 @@
 ﻿-- T1: khách hàng xem các sản phẩm của chi nhánh 1 
+use DB_QLDatChuyenHang
+go
 create proc XemSP_ThuocChiNhanh
 (
 	@MaChiNhanh int 

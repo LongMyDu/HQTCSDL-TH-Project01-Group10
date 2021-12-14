@@ -35,10 +35,39 @@ app.post('/insert-order-post', async function (req, res) {
    };
     
    //TODO: Thêm đơn hàng mới vào DB
-   console.log("Đơn hàng được gửi tới: ", response);
+   console.log("[insert-order-post] Đơn hàng được gửi tới: ", response);
 
    //TODO: Gửi thông báo lại cho client:
    res.send("Insert successfully!");
+})
+
+app.post('/signin-post', async function (req, res) {
+   // Prepare output in JSON format
+   let response = {
+      username :req.body.TaiKhoan,
+      password: req.body.MatKhau,
+   };
+    
+   //TODO: Check username và password có hợp lệ hay không
+   console.log("[signin-post] Tài khoản và mật khẩu gửi tới: ", response);
+
+   //TODO: Gửi thông báo lại cho client
+   res.send("Sign in successfully!");
+})
+
+app.post('/changepass-post', async function (req, res) {
+   // Prepare output in JSON format
+   let response = {
+      username: req.body.TaiKhoan,
+      oldpass: req.body.MatKhauCu,
+      newpass: req.body.MatKhauMoi
+   };
+    
+   //TODO: Check username và password có hợp lệ hay không, có thì đổi mật khẩu trong DB
+   console.log("[changepass-post] Tài khoản và mật khẩu gửi tới: ", response);
+
+   //TODO: Gửi thông báo lại cho client
+   res.send("Sign in successfully!");
 })
 
 

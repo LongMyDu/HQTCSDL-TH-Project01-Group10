@@ -13,7 +13,7 @@ HtmlElements.signInForm.addEventListener("submit", (e) => {
     // Get username and password
     let username = HtmlElements.taiKhoanInput.value;
     let password = HtmlElements.matKhauInput.value;
-    
+
     data = `TaiKhoan=${username}&MatKhau=${password}`;
 
     let request = new XMLHttpRequest();
@@ -22,10 +22,22 @@ HtmlElements.signInForm.addEventListener("submit", (e) => {
 
     request.onreadystatechange = function() { 
         // Call a function when the state changes.
+
         if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
             // Request finished. Do processing here.
-            alert(request.responseText);
+            
+            let thongTinTaiKhoan = JSON.parse(request.response);
+            console.log("thong tin tai khoan: ", thongTinTaiKhoan); 
+            if(thongTinTaiKhoan[0].PhanLoai === 'KH'){
+                window.location.replace("/index.html");
+            }
+            if(thongTinTaiKhoan[0].PhanLoai === 'DT'){
+                console.log("trang cho doi tac"); 
+                // TODO: open doitac page
+            }
+        
         }
     }
+
     request.send(data);
 })

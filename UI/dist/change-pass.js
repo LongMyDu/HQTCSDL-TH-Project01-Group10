@@ -18,6 +18,11 @@ HtmlElements.changePassForm.addEventListener("submit", (e) => {
     let newpass = HtmlElements.matKhauMoiInput.value;
     let newpass2 = HtmlElements.matKhauMoiLaiInput.value;
 
+    if(username === '' || password === '' || newpass === '' || newpass2 === ''){
+        alert("Nhập thiếu thông tin"); 
+        return;
+    }
+
     if (newpass !== newpass2)
     {
         alert("Nhập lại mật khẩu không khớp");

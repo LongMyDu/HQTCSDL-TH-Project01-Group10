@@ -1,13 +1,16 @@
-const express = require('express');
+const express = require('express')
+      , redirect = require("express-redirect");
 const app = express();
+redirect(app);
 const bodyParser = require("body-parser");
 const sql = require("mssql");
+const { request } = require('express');
 
 const config = {
    user: 'sa',
-   password: 'lmd',
+   password: 'ttt',
    server: 'localhost', 
-   port: 51713,
+   port: 8888,
    database: 'DB_QLDatChuyenHang',
    trustServerCertificate: true,
 };
@@ -47,12 +50,39 @@ app.post('/signin-post', async function (req, res) {
       username :req.body.TaiKhoan,
       password: req.body.MatKhau,
    };
-    
+    console.log("sign in post here");
    //TODO: Check username và password có hợp lệ hay không
+
+   if(response.username.length > 20 || response.password.length > 20 || response.username === '' || response.password === ''){
+      res.send("Tài khoản hoặc mật khẩu không hợp lệ."); 
+      return; 
+   }
    console.log("[signin-post] Tài khoản và mật khẩu gửi tới: ", response);
 
+   sqlQuery = `exec DangNhap ${response.username}, ${response.password}`; 
+   const request = new sql.Request(); 
+   request.query(sqlQuery, (err, result) => {
+      if(err){
+         res.send("Tài khoản hoặc mật khẩu không chính xác"); 
+         //res.status(500).send(err);
+         return; 
+      }
+      console.log("result: ", result[0]);
+      //res.send("Sign in successfully!");
+      console.log("dang nhap thanh cong");
+
+      var totalAccount = result.recordset.length;
+      const Info_Account = result.recordset.map(elm => ({ MaKH: elm.MaKH, PhanLoai: elm.LoaiTaiKhoan}));
+      
+      // Send to res
+      res.json(Info_Account);
+
+      //res.json(200);
+      //return res.json({success: 200, KH: });
+   })
+
+
    //TODO: Gửi thông báo lại cho client
-   res.send("Sign in successfully!");
 })
 
 app.post('/changepass-post', async function (req, res) {
@@ -66,8 +96,21 @@ app.post('/changepass-post', async function (req, res) {
    //TODO: Check username và password có hợp lệ hay không, có thì đổi mật khẩu trong DB
    console.log("[changepass-post] Tài khoản và mật khẩu gửi tới: ", response);
 
+
+   sqlQuery = `exec DoiMatKhau ${response.username},  ${response.oldpass}, ${response.newpass}, ${response.newpass}`
+   const request = new sql.Request(); 
+   request.query(sqlQuery, (err, result) => {
+      if(err){
+         res.send("Tài khoản hoặc mật khẩu không chính xác"); 
+         //res.status(500).send(err);
+         return; 
+      }
+      
+      res.send("Change password successfully!");
+   })
+
    //TODO: Gửi thông báo lại cho client
-   res.send("Sign in successfully!");
+   //res.send("Change password successfully!");
 })
 
 
@@ -87,6 +130,7 @@ app.get('/api/sanpham-list', function (req, res) {
       
       // Send to res
       res.json({totalItems: totalItems, sanpham_list: total_sanpham_list});
+      console.log("hello");
    });
 })
 

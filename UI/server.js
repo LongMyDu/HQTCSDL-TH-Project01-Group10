@@ -1,7 +1,5 @@
-const express = require('express')
-      , redirect = require("express-redirect");
+const express = require('express');
 const app = express();
-redirect(app);
 const bodyParser = require("body-parser");
 const sql = require("mssql");
 const { request } = require('express');

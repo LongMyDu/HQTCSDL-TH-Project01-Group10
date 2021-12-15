@@ -135,6 +135,34 @@ app.get('/api/sanpham-list', function (req, res) {
 })
 
 
+app.get('/api/donhang-list', function (req, res) {
+   let chinhanh = req.query.chinhanh;
+   let tinhtrang = req.query.tinhtrang;
+   console.log("[get donhang-list] Chi nhánh: ", chinhanh, "Tình trạng: ", tinhtrang);
+
+   //TODO: sửa lại câu câu truy vấn này
+   //var sqlQuery = `exec XemTatCa_SANPHAM_ThuocChiNhanh ${req.query.chinhanh}`
+
+   // TODO: get donhang_list in DB
+//    const request = new sql.Request();
+//    request.query(sqlQuery, (err, result) => {
+//      if (err)
+//      {
+//        res.status(500).send(err);
+//        return;
+//      }
+//      // Số lượng kết quả trả về
+//      var totalResult = result.recordset.length; 
+     
+//      //TODO: sửa lại câu này
+//      const donhang_list = result.recordset.map(elm => ({ id: elm.MaSP, tenSP: elm.TenSP, gia: elm.Gia, soLuongTon: elm.SoLuongTon, chiNhanh: elm.MaChiNhanh}));
+     
+//      // Send to res
+//      res.json({SLdonhang: totalResult, donhang_list: donhang_list});
+//   });
+})
+
+
 sql.connect(config, err => {
    if (err) {
       console.log('Failed to open a SQL Database connection.', err.stack);

@@ -38,16 +38,16 @@ const showDonHang = (donHang, index) => {
             <span>${donHang.id}</span>
         </div>
         <div class="col-2">
-            <span>${donhang.maKH}</span>
+            <span>${donHang.maKH}</span>
         </div>
         <div class="col-3">
-            <span>${donhang.tongTien}</span>
+            <span>${donHang.tongTien}</span>
         </div>
         <div class="col-3">
-            <span>${donhang.tinhTrang}</span>
+            <span>${donHang.tinhTrang}</span>
         </div>
         <div class="col-1">
-            <span>${donhang.maCN}</span>
+            <span>${donHang.maCN}</span>
         </div>
     </div>
     `

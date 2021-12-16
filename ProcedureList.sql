@@ -537,26 +537,20 @@ create proc DangNhap
  
 as
 begin tran 	
-	if (LEN(@TK) > 20) 
-		begin
-			raiserror(N'Tên đăng nhập không tồn tại', 16,1)
-			rollback tran 
-		end
+	SET TRAN ISOLATION LEVEL REPEATABLE READ
+	
 
-	else if (LEN(@MK) > 20) 
-		begin
-			raiserror(N'Sai mật khẩu', 16,1)
-			rollback tran 
-		end 
-
-	else if not exists(select * from TaiKhoan
+	if not exists(select * from TaiKhoan
 						where TaiKhoan.TenTaiKhoan = @TK and TaiKhoan.MatKhau = @MK) 
 		begin
 			raiserror (N'Sai tên đăng nhập hoặc mật khẩu', 16,1) 
 			rollback tran  
+			
 		end
 	else 
+		begin
 			print (N'Đăng nhập thành công')
+		end 
 
 
 	if not exists (select * from TaiKhoan 
@@ -564,6 +558,26 @@ begin tran
 		begin 
 			raiserror(N'Không tìm thấy thông tin tài khoản này',16,1)
 			rollback tran  
+		end
+	else 
+		begin 
+			declare @Loai char(2),
+						@MaKH int
+				set @MaKH = -1
+				select @Loai = PhanLoai
+								from TaiKhoan
+								where TaiKhoan.TenTaiKhoan = @TK
+			
+			
+				if (@Loai = 'KH')
+					begin
+					
+						select @MaKH  = MaKH
+										from TaiKhoan tk join KhachHang  kh on tk.TenTaiKhoan = kh.TenTaiKhoan 
+					
+					end
+				select @MaKH as MaKH,
+						@Loai as LoaiTaiKhoan
 		end
 commit tran 
 
@@ -587,14 +601,10 @@ if not exists(select * from TaiKhoan where taikhoan.TenTaiKhoan = @TK and TaiKho
 		raiserror(N'Tài khoản hoặc mật khẩu không chính xác',16,1) 
 		rollback 
 	end 
-else if (@MKMoi = null or len(@MKMoi) > 20 ) 
+
+else if (@MKMoi = @MK ) 
 	begin 
-	raiserror (N'Mật khẩu mới không hợp lệ',16,1)
-	rollback 
-	end
-else if (@MKMoi != @MKMoiLan2 ) 
-	begin 
-	raiserror (N'Nhập sai mật khẩu mới',16,1)
+	raiserror (N'Mật khẩu mới phải khác mật khẩu cũ',16,1)
 	rollback 
 	end
 else  

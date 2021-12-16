@@ -4,15 +4,22 @@ const bodyParser = require("body-parser");
 const sql = require("mssql");
 const { request } = require('express');
 
+// const config = {
+//    user: 'sa',
+//    password: 'ttt',
+//    server: 'localhost', 
+//    port: 8888,
+//    database: 'DB_QLDatChuyenHang',
+//    trustServerCertificate: true,
+// };
 const config = {
    user: 'sa',
-   password: 'ttt',
+   password: 'lmd',
    server: 'localhost', 
-   port: 8888,
+   port: 51713,
    database: 'DB_QLDatChuyenHang',
    trustServerCertificate: true,
 };
-
 
 app.use(express.static('dist'));
 //Here we are configuring express to use body-parser as middle-ware.
@@ -61,15 +68,13 @@ app.post('/signin-post', async function (req, res) {
    const request = new sql.Request(); 
    request.query(sqlQuery, (err, result) => {
       if(err){
-         res.send("Tài khoản hoặc mật khẩu không chính xác"); 
-         //res.status(500).send(err);
+         console.log(err);
+         res.status(401).send("Tài khoản hoặc mật khẩu không chính xác"); 
          return; 
       }
-      console.log("result: ", result[0]);
-      //res.send("Sign in successfully!");
+      console.log("result: ", result[0]);     
       console.log("dang nhap thanh cong");
 
-      var totalAccount = result.recordset.length;
       const Info_Account = result.recordset.map(elm => ({ MaKH: elm.MaKH, PhanLoai: elm.LoaiTaiKhoan}));
       
       // Send to res
@@ -111,6 +116,37 @@ app.post('/changepass-post', async function (req, res) {
    //res.send("Change password successfully!");
 })
 
+app.post('/capnhatgia-post', async function (req, res) {
+   // Prepare output in JSON format
+   let response = {
+      masp: req.body.MaSP,
+      giamoi: req.body.GiaMoi
+   };
+
+   console.log("[capnhatgia-post] Mã sản phẩm và giá bán mới: ", response);
+
+   //TODO: cập nhật giá bán mới cho sản phẩm trong DB
+
+   //TODO: gửi thông báo lại cho client
+   res.send("Cập nhật thành công!");
+});
+
+
+app.post('/themSLTon-post', async function (req, res) {
+   // Prepare output in JSON format
+   let response = {
+      masp: req.body.MaSP,
+      slThem: req.body.SLThem
+   };
+
+   console.log("[themSLTon-post] Mã sản phẩm và số lượng cần thêm: ", response);
+
+   //TODO: thêm số lượng tồn cho sản phẩm trong DB
+
+   //TODO: gửi thông báo lại cho client
+   res.send("Cập nhật thành công!");
+});
+
 
 app.get('/api/sanpham-list', function (req, res) {
     var sqlQuery = `exec XemTatCa_SANPHAM_ThuocChiNhanh ${req.query.chinhanh}`
@@ -128,7 +164,6 @@ app.get('/api/sanpham-list', function (req, res) {
       
       // Send to res
       res.json({totalItems: totalItems, sanpham_list: total_sanpham_list});
-      console.log("hello");
    });
 })
 

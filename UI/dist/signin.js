@@ -15,6 +15,7 @@ HtmlElements.signInForm.addEventListener("submit", (e) => {
     let password = HtmlElements.matKhauInput.value;
 
     data = `TaiKhoan=${username}&MatKhau=${password}`;
+    console.log(data);
 
     let request = new XMLHttpRequest();
     request.open('POST', '/signin-post', true);
@@ -22,7 +23,6 @@ HtmlElements.signInForm.addEventListener("submit", (e) => {
 
     request.onreadystatechange = function() { 
         // Call a function when the state changes.
-
         if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
             // Request finished. Do processing here.
             
@@ -35,9 +35,11 @@ HtmlElements.signInForm.addEventListener("submit", (e) => {
                 console.log("trang cho doi tac"); 
                 // TODO: open doitac page
             }
-        
+        }
+        if (this.readyState === XMLHttpRequest.DONE && this.status === 401) {
+            alert(request.responseText);
         }
     }
 
     request.send(data);
-})
+});

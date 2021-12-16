@@ -376,6 +376,7 @@ GO
 --Procedure thêm đơn hàng mới 
 create procedure Them_DONHANG
 (
+	@MaDonHang int,
 	@HinhThucThanhToan nvarchar(20),
 	@DiaChiGiaoHang nvarchar(50),
 	@PhiVC int,
@@ -387,9 +388,9 @@ as
 begin tran
 	-- !!!Không cần kiểm tra MaKH và MaChiNhanh vì đã có Foreign Key Constraint
 
-	insert into DONHANG (HinhThucThanhToan, DiaChiGiaoHang, PhiVC, MaKH, MaChiNhanh, NgayLap, TinhTrangVanChuyen)
-	values (@HinhThucThanhToan, @DiaChiGiaoHang, @PhiVC, @MaKH, @MaChiNhanh, @NgayLap, N'Chờ xác nhận')
-	commit tran
+	insert into DONHANG (MaDonHang, HinhThucThanhToan, DiaChiGiaoHang, PhiVC, MaKH, MaChiNhanh, NgayLap, TinhTrangVanChuyen)
+	values (@MaDonHang, @HinhThucThanhToan, @DiaChiGiaoHang, @PhiVC, @MaKH, @MaChiNhanh, @NgayLap, N'Chờ xác nhận')
+	commit tran	
 GO
 
 --Procedure giảm giá X% của một sản phẩm nếu giá của sản phẩm đó dưới Y

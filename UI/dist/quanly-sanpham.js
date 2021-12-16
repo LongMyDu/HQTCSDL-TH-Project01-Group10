@@ -86,10 +86,10 @@ HtmlElements.themSLTonForm.addEventListener("submit", (e) => {
   
     console.log(masp, slThem);
 
-    data = `MaSP=${masp}&SLThem=${slThem}`;
+    data = `SanPham=${masp}&SoLuongThem=${slThem}`;
 
     let request = new XMLHttpRequest();
-    request.open('POST', '/themSLTon-post', true);
+    request.open('POST', '/add-quantity-item-post', true);
     request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
     request.onreadystatechange = function() { 
@@ -112,10 +112,10 @@ HtmlElements.capNhatGiaForm.addEventListener("submit", (e) => {
   
     console.log(masp, giamoi);
 
-    data = `MaSP=${masp}&GiaMoi=${giamoi}`;
+    data = `SanPham=${masp}&GiaMoi=${giamoi}`;
 
     let request = new XMLHttpRequest();
-    request.open('POST', '/capnhatgia-post', true);
+    request.open('POST', '/update-price-item-post', true);
     request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
     request.onreadystatechange = function() { 

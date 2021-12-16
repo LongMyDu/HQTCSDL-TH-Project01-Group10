@@ -4,14 +4,6 @@ const bodyParser = require("body-parser");
 const sql = require("mssql");
 const { request } = require('express');
 
-// const config = {
-//    user: 'sa',
-//    password: 'ttt',
-//    server: 'localhost', 
-//    port: 8888,
-//    database: 'DB_QLDatChuyenHang',
-//    trustServerCertificate: true,
-// };
 const config = {
    user: 'sa',
    password: 'lmd',
@@ -21,33 +13,172 @@ const config = {
    trustServerCertificate: true,
 };
 
+
+// const config = {
+//    user: 'sa',
+//    password: 'ttt',
+//    server: 'localhost', 
+//    port: 8888,
+//    database: 'DB_QLDatChuyenHang',
+//    trustServerCertificate: true,
+// };
+
+// const config = {
+//    user: 'sa',
+//    password: 'tkt',
+//    server: 'localhost', 
+//    port: 62437,
+//    database: 'DB_QLDatChuyenHang',
+//    trustServerCertificate: true,
+// };
+
 app.use(express.static('dist'));
 //Here we are configuring express to use body-parser as middle-ware.
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-
 app.get('/', function (req, res) {
    res.sendFile(__dirname + "/index.html");
 })
 
+
+
+// Lấy ngày hiện tại
+function getCurrentDate(){
+   var dt = new Date();
+
+   var day = ("0" + dt.getDate()).slice(-2);
+   var month = ("0" + (dt.getMonth() + 1)).slice(-2);
+   var year = dt.getFullYear();
+   var hours = ("0" + dt.getHours()).slice(-2);
+   var minutes = ("0" + dt.getMinutes()).slice(-2);
+   var seconds = ("0" + dt.getSeconds()).slice(-2);
+
+   var dateTime = year + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + seconds;
+   return dateTime;
+}
+
+// Tạo mã đơn hàng
+function getIDofTable(id_name, table_name) {
+   var maxID, newID;
+   sqlQuery = `select top 1 ${id_name} from ${table_name} order by ${id_name} desc`; 
+   console.log("queryID: ", sqlQuery);
+
+   const request = new sql.Request(); 
+   request.query(sqlQuery, (err, maxID) => {
+      if(err){
+         console.log("can't get id from table"); 
+         return; 
+      }
+      console.log("max ID: ", maxID[0]);
+   })
+
+   newID = Number(maxID) + 1;
+   return newID;
+}
+
 app.post('/insert-order-post', async function (req, res) {
    // Prepare output in JSON format
    let response = {
+      donhang:getIDofTable("MaDonHang", "DONHANG"),
       httt :req.body.HTTT,
       diachi: req.body.DiaChi,
-      tongtien: req.body.TongTien,
       phiVC: req.body.PhiVC,
+      khachhang:req.body.KhachHang,
       chinhanh: req.body.MaChiNhanh,
+      ngaylap: getCurrentDate(),
+      tongtien: req.body.TongTien,
       cart_list: JSON.parse(req.body.cart_list)
    };
-    
+
    //TODO: Thêm đơn hàng mới vào DB
    console.log("[insert-order-post] Đơn hàng được gửi tới: ", response);
 
-   //TODO: Gửi thông báo lại cho client:
-   res.send("Insert successfully!");
+   sqlQuery = `exec Them_DONHANG ${response.donhang}, ${response.httt}, ${response.diachi}, ${response.phiVC}, ${response.khachhang}, ${response.chinhanh}, ${response.ngaylap}`; 
+
+   const request = new sql.Request(); 
+   request.query(sqlQuery, (err, result) => {
+      if(err){
+         res.send("Đơn hàng không hợp lệ"); 
+         //res.status(500).send(err);
+         return; 
+      }
+
+      //TODO: Gửi thông báo lại cho client:
+      res.send("Insert successfully!");
+   })
 })
+
+
+
+app.post('/add-quantity-item-post', async function (req, res) {
+   // Prepare output in JSON format
+   let response = {
+      sanpham: req.body.SanPham,
+      soluongthem: req.body.SoLuongThem,
+   };
+
+   //Thêm số lượng tồn của sản phẩm
+   console.log("[add-quantity-item-post] Số lượng thêm gửi tới: ", response);
+   sqlQuery = `exec Them_SanPham_SoLuong ${response.sanpham}, ${response.soluongthem}`;
+
+   const request = new sql.Request();
+   request.query(sqlQuery, (err, result) => {
+      if(err){
+         res.send("Thêm số lượng sản phẩm thất bại");
+         return;
+      }
+      res.send("Thêm số lượng sản phẩm thành công")
+   })
+})
+
+
+
+app.post('/update-price-item-post', async function (req, res) {
+   // Prepare output in JSON format
+   let response = {
+      sanpham: req.body.SanPham,
+      giamoi: req.body.GiaMoi,
+   };
+
+   // thay đổi giá bán
+   console.log("[update-price-item-post] Giá mới gửi tới: ", response);
+   sqlQuery = `exec CapNhat_SANPHAM_gia ${response.sanpham}, ${response.giamoi}`;
+
+   const request = new sql.Request();
+   request.query(sqlQuery, (err, result) => {
+      if(err){
+         res.send("Thay đổi giá bán thất bại");
+         return;
+      }
+      res.send("Thay đổi giá bán thành công")
+   })
+})
+
+
+
+app.post('/discount-branch-post', async function (req, res) {
+   // Prepare output in JSON format
+   let response = {
+      chinhanh: req.body.MaChiNhanh,
+      giamgia: req.body.PhanTramGiamGia,
+   };
+
+   // giảm giá phần trăm tất cả sản phẩm của chi nhánh
+   console.log("[discount-branch-post] Giảm giá gửi tới: ", response);
+   sqlQuery = `exec CapNhat_SANPHAM_GiamGiaDongLoat ${response.chinhanh}, ${response.giamgia}`;
+
+   const request = new sql.Request();
+   request.query(sqlQuery, (err, result) => {
+      if(err){
+         res.send("Giảm giá chi nhánh thất bại");
+         return;
+      }
+      res.send("Giảm giá chi nhánh thành công")
+   })
+})
+
+
 
 app.post('/signin-post', async function (req, res) {
    // Prepare output in JSON format
@@ -88,6 +219,8 @@ app.post('/signin-post', async function (req, res) {
    //TODO: Gửi thông báo lại cho client
 })
 
+
+
 app.post('/changepass-post', async function (req, res) {
    // Prepare output in JSON format
    let response = {
@@ -116,37 +249,6 @@ app.post('/changepass-post', async function (req, res) {
    //res.send("Change password successfully!");
 })
 
-app.post('/capnhatgia-post', async function (req, res) {
-   // Prepare output in JSON format
-   let response = {
-      masp: req.body.MaSP,
-      giamoi: req.body.GiaMoi
-   };
-
-   console.log("[capnhatgia-post] Mã sản phẩm và giá bán mới: ", response);
-
-   //TODO: cập nhật giá bán mới cho sản phẩm trong DB
-
-   //TODO: gửi thông báo lại cho client
-   res.send("Cập nhật thành công!");
-});
-
-
-app.post('/themSLTon-post', async function (req, res) {
-   // Prepare output in JSON format
-   let response = {
-      masp: req.body.MaSP,
-      slThem: req.body.SLThem
-   };
-
-   console.log("[themSLTon-post] Mã sản phẩm và số lượng cần thêm: ", response);
-
-   //TODO: thêm số lượng tồn cho sản phẩm trong DB
-
-   //TODO: gửi thông báo lại cho client
-   res.send("Cập nhật thành công!");
-});
-
 
 app.get('/api/sanpham-list', function (req, res) {
     var sqlQuery = `exec XemTatCa_SANPHAM_ThuocChiNhanh ${req.query.chinhanh}`
@@ -166,6 +268,7 @@ app.get('/api/sanpham-list', function (req, res) {
       res.json({totalItems: totalItems, sanpham_list: total_sanpham_list});
    });
 })
+
 
 
 app.get('/api/donhang-list', function (req, res) {
@@ -194,6 +297,7 @@ app.get('/api/donhang-list', function (req, res) {
 //      res.json({SLdonhang: totalResult, donhang_list: donhang_list});
 //   });
 })
+
 
 
 sql.connect(config, err => {

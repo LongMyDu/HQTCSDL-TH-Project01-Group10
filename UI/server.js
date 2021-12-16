@@ -4,24 +4,24 @@ const bodyParser = require("body-parser");
 const sql = require("mssql");
 const { request } = require('express');
 
-// const config = {
-//    user: 'sa',
-//    password: 'lmd',
-//    server: 'localhost', 
-//    port: 51713,
-//    database: 'DB_QLDatChuyenHang',
-//    trustServerCertificate: true,
-// };
-
-
 const config = {
    user: 'sa',
-   password: 'ttt',
+   password: 'lmd',
    server: 'localhost', 
-   port: 8888,
+   port: 51713,
    database: 'DB_QLDatChuyenHang',
    trustServerCertificate: true,
 };
+
+
+// const config = {
+//    user: 'sa',
+//    password: 'ttt',
+//    server: 'localhost', 
+//    port: 8888,
+//    database: 'DB_QLDatChuyenHang',
+//    trustServerCertificate: true,
+// };
 
 // const config = {
 //    user: 'sa',
@@ -232,6 +232,7 @@ app.post('/signin-post', async function (req, res) {
          return; 
       }  
       console.log("dang nhap thanh cong");
+      console.log(result);
       // Trả về client thông tin mã KH và loại người dùng
       const Info_Account = result.recordset.map(elm => ({ MaKH: elm.MaKH, PhanLoai: elm.LoaiTaiKhoan}));
       

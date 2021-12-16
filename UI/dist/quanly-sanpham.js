@@ -7,13 +7,21 @@ const HtmlElements = {
     locButton: document.getElementById("loc-button"),
 
     themSLTonForm: document.getElementById("themSLton-form"),
-    giamGiaForm: document.getElementById("giamgia-tatca-form"),
     themSLTon_maSP_Input: document.getElementById("themSLton-masanpham-input"),
     themSLTon_SL_Input: document.getElementById("themSLton-SLton-input"),
 
     capNhatGiaForm: document.getElementById("capnhatgia-form"),
     capNhatGia_maSP_Input: document.getElementById("capnhatgia-masanpham-input"),
-    capNhatGia_giaMoi_Input: document.getElementById("capnhatgia-giamoi-input")
+    capNhatGia_giaMoi_Input: document.getElementById("capnhatgia-giamoi-input"),
+
+    giamGiaForm: document.getElementById("giamgia-tatca-form"),
+    giamGiaTatCa_TiLe_Input: document.getElementById("giamgia-tile-input"),
+
+    themSPForm: document.getElementById("themsp-form"),
+    tenSPInput: document.getElementById("tensp-input"),
+    giaBanInput: document.getElementById("giasp-input"),
+    slTonInput: document.getElementById("slton-input"),
+    themSP_maCN_Input: document.getElementById("themsp-chinhanh-input")
 };
 
 
@@ -116,6 +124,60 @@ HtmlElements.capNhatGiaForm.addEventListener("submit", (e) => {
 
     let request = new XMLHttpRequest();
     request.open('POST', '/update-price-item-post', true);
+    request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+    request.onreadystatechange = function() { 
+        // Call a function when the state changes.
+        if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+            // Request finished. Do processing here.
+            alert(request.responseText);
+        }
+    }
+    request.send(data);
+})
+
+
+HtmlElements.giamGiaForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    // Get mã sản phảm và giá bán mới 
+    let tile = HtmlElements.giamGiaTatCa_TiLe_Input.value;
+    let chinhanh = HtmlElements.chiNhanhInput.value;
+  
+    console.log(tile, chinhanh);
+
+    data = `MaChiNhanh=${chinhanh}&PhanTramGiamGia=${tile}`;
+
+    let request = new XMLHttpRequest();
+    request.open('POST', '/discount-branch-post', true);
+    request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+    request.onreadystatechange = function() { 
+        // Call a function when the state changes.
+        if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+            // Request finished. Do processing here.
+            alert(request.responseText);
+        }
+    }
+    request.send(data);
+})
+
+
+HtmlElements.themSPForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    // Get tên sp, số lượng tồn, giá bán, mã CN 
+    let tensp = HtmlElements.tenSPInput.value;
+    let slTon = HtmlElements.slTonInput.value;
+    let chinhanh = HtmlElements.themSP_maCN_Input.value;
+    let giaban = HtmlElements.giaBanInput.value;
+  
+    console.log(tensp, giaban, slTon, chinhanh);
+
+    data = `TenSP=${tensp}&GiaBan=${giaban}&SlTon=${slTon}&MaChiNhanh=${chinhanh}`;
+
+    let request = new XMLHttpRequest();
+    request.open('POST', '/insert-product-post', true);
     request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
     request.onreadystatechange = function() { 

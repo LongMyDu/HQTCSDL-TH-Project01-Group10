@@ -111,6 +111,34 @@ app.post('/insert-order-post', async function (req, res) {
 
 
 
+app.post('/insert-product-post', async function (req, res) {
+   // Prepare output in JSON format
+   let response = {
+      tensp :req.body.TenSP,
+      slTon: req.body.SlTon,
+      chinhanh: req.body.MaChiNhanh,
+      giaban: req.body.GiaBan
+   };
+
+   //TODO: Thêm sản phẩm mới vào DB
+   console.log("[insert-product-post] Sản phẩm được gửi tới: ", response);
+
+   //sqlQuery = `exec Them_DONHANG ${response.donhang}, ${response.httt}, ${response.diachi}, ${response.phiVC}, ${response.khachhang}, ${response.chinhanh}, ${response.ngaylap}`; 
+
+   // const request = new sql.Request(); 
+   // request.query(sqlQuery, (err, result) => {
+   //    if(err){
+   //       //res.status(500).send(err);
+   //       return; 
+   //    }
+
+   //    //TODO: Gửi thông báo lại cho client:
+   //    res.send("Thêm sản phẩm!");
+   // })
+})
+
+
+
 app.post('/add-quantity-item-post', async function (req, res) {
    // Prepare output in JSON format
    let response = {
@@ -174,7 +202,7 @@ app.post('/discount-branch-post', async function (req, res) {
          res.send("Giảm giá chi nhánh thất bại");
          return;
       }
-      res.send("Giảm giá chi nhánh thành công")
+      res.send(`Giảm giá tất cả sản phẩm của chi nhánh ${response.chinhanh} thành công`)
    })
 })
 

@@ -4,24 +4,24 @@ const bodyParser = require("body-parser");
 const sql = require("mssql");
 const { request } = require('express');
 
-const config = {
-   user: 'sa',
-   password: 'lmd',
-   server: 'localhost', 
-   port: 51713,
-   database: 'DB_QLDatChuyenHang',
-   trustServerCertificate: true,
-};
-
-
 // const config = {
 //    user: 'sa',
-//    password: 'ttt',
+//    password: 'lmd',
 //    server: 'localhost', 
-//    port: 8888,
+//    port: 51713,
 //    database: 'DB_QLDatChuyenHang',
 //    trustServerCertificate: true,
 // };
+
+
+const config = {
+   user: 'sa',
+   password: 'ttt',
+   server: 'localhost', 
+   port: 8888,
+   database: 'DB_QLDatChuyenHang',
+   trustServerCertificate: true,
+};
 
 // const config = {
 //    user: 'sa',
@@ -230,17 +230,13 @@ app.post('/signin-post', async function (req, res) {
          console.log(err);
          res.status(401).send("Tài khoản hoặc mật khẩu không chính xác"); 
          return; 
-      }
-      console.log("result: ", result[0]);     
+      }  
       console.log("dang nhap thanh cong");
-
+      // Trả về client thông tin mã KH và loại người dùng
       const Info_Account = result.recordset.map(elm => ({ MaKH: elm.MaKH, PhanLoai: elm.LoaiTaiKhoan}));
       
       // Send to res
       res.json(Info_Account);
-
-      //res.json(200);
-      //return res.json({success: 200, KH: });
    })
 
 
@@ -270,11 +266,10 @@ app.post('/changepass-post', async function (req, res) {
          return; 
       }
       
+      //TODO: Gửi thông báo lại cho client
       res.send("Change password successfully!");
    })
 
-   //TODO: Gửi thông báo lại cho client
-   //res.send("Change password successfully!");
 })
 
 
@@ -305,25 +300,25 @@ app.get('/api/donhang-list', function (req, res) {
    console.log("[get donhang-list] Chi nhánh: ", chinhanh, "Tình trạng: ", tinhtrang);
 
    //TODO: sửa lại câu câu truy vấn này
-   //var sqlQuery = `exec XemTatCa_SANPHAM_ThuocChiNhanh ${req.query.chinhanh}`
-
-   // TODO: get donhang_list in DB
-//    const request = new sql.Request();
-//    request.query(sqlQuery, (err, result) => {
-//      if (err)
-//      {
-//        res.status(500).send(err);
-//        return;
-//      }
-//      // Số lượng kết quả trả về
-//      var totalResult = result.recordset.length; 
+   var sqlQuery = `exec XemTatCa_DONHANG_ThuocChiNhanh ${req.query.chinhanh}, N'${req.query.tinhtrang}'`;
+   console.log("sql :", sqlQuery);
+   //TODO: get donhang_list in DB
+   const request = new sql.Request();
+   request.query(sqlQuery, (err, result) => {
+     if (err)
+     {
+       res.status(500).send(err);
+       return;
+     }
+     // Số lượng kết quả trả về
+     var totalResult = result.recordset.length; 
      
-//      //TODO: sửa lại câu này
-//      const donhang_list = result.recordset.map(elm => ({ id: elm.MaSP, tenSP: elm.TenSP, gia: elm.Gia, soLuongTon: elm.SoLuongTon, chiNhanh: elm.MaChiNhanh}));
+     //TODO: sửa lại câu này
+     const donhang_list = result.recordset.map(elm => ({ id: elm.MaDonHang, MaKH: elm.MaKH, tongTien: elm.PhiSP, tinhTrang: elm.TinhTrangVanChuyen, maCN: elm.MaChiNhanh}));
      
-//      // Send to res
-//      res.json({SLdonhang: totalResult, donhang_list: donhang_list});
-//   });
+     // Send to res
+     res.json({SLdonhang: totalResult, donhang_list: donhang_list});
+  });
 })
 
 

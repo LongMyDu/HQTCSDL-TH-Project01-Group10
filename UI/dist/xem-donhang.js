@@ -54,7 +54,6 @@ const showDonHang = (donHang, index) => {
     HtmlElements.sanPhamList.insertAdjacentHTML('beforeend', html);
 }
 
-
 const showDonHangList = (donhang_list) => {
     let index = 0;
     for (let donhang of donhang_list) {
@@ -62,7 +61,6 @@ const showDonHangList = (donhang_list) => {
         index += 1;
     }
 }
-
 
 const showData = (totalItems, donhang_list) => {
     clearDonHangList();

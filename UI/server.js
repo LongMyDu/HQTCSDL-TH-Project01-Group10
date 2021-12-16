@@ -14,14 +14,14 @@ const { request } = require('express');
 // };
 
 
-const config = {
-   user: 'sa',
-   password: 'ttt',
-   server: 'localhost', 
-   port: 8888,
-   database: 'DB_QLDatChuyenHang',
-   trustServerCertificate: true,
-};
+// const config = {
+//    user: 'sa',
+//    password: 'ttt',
+//    server: 'localhost', 
+//    port: 8888,
+//    database: 'DB_QLDatChuyenHang',
+//    trustServerCertificate: true,
+// };
 
 // const config = {
 //    user: 'sa',
@@ -114,27 +114,36 @@ app.post('/insert-order-post', async function (req, res) {
 app.post('/insert-product-post', async function (req, res) {
    // Prepare output in JSON format
    let response = {
+      MaSp : getIDofTable("MaSP", "SanPham"),
       tensp :req.body.TenSP,
       slTon: req.body.SlTon,
       chinhanh: req.body.MaChiNhanh,
       giaban: req.body.GiaBan
    };
 
-   //TODO: Thêm sản phẩm mới vào DB
+   // Thêm sản phẩm mới vào DB
    console.log("[insert-product-post] Sản phẩm được gửi tới: ", response);
+   
+   
+   sqlQuery = `exec Them_1_Sp_VaoChiNhanh ${response.MaSp}, ${response.tensp}, ${response.giaban}, ${response.slTon}, ${response.chinhanh}`; 
+   
+   if(response.slTon < 1){
+      res.send("Số lượng tồn không hợp lệ");
+      return;
+   }
+   else if (response.giaban < 0) { 
+      res.send("Giá bán không hợp lệ");
+   }
+   const request = new sql.Request(); 
+   request.query(sqlQuery, (err, result) => {
+      if(err){
+         res.send("Thêm sản phẩm không thành công");
+         return; 
+      }
 
-   //sqlQuery = `exec Them_DONHANG ${response.donhang}, ${response.httt}, ${response.diachi}, ${response.phiVC}, ${response.khachhang}, ${response.chinhanh}, ${response.ngaylap}`; 
-
-   // const request = new sql.Request(); 
-   // request.query(sqlQuery, (err, result) => {
-   //    if(err){
-   //       //res.status(500).send(err);
-   //       return; 
-   //    }
-
-   //    //TODO: Gửi thông báo lại cho client:
-   //    res.send("Thêm sản phẩm!");
-   // })
+      //Gửi thông báo lại cho client:
+      res.send("Thêm sản phẩm thành công!");
+   })
 })
 
 
@@ -202,7 +211,7 @@ app.post('/discount-branch-post', async function (req, res) {
          res.send("Giảm giá chi nhánh thất bại");
          return;
       }
-      res.send(`Giảm giá tất cả sản phẩm của chi nhánh ${response.chinhanh} thành công`)
+      res.send("Giảm giá chi nhánh thành công")
    })
 })
 
@@ -233,14 +242,17 @@ app.post('/signin-post', async function (req, res) {
       }  
       console.log("dang nhap thanh cong");
       // Trả về client thông tin mã KH và loại người dùng
-      const Info_Account = result.recordset.map(elm => ({ MaKH: elm.MaKH, PhanLoai: elm.LoaiTaiKhoan}));
-      
+      const Info_Account = result.recordset.map(elm => ({ MaNguoiDung: elm.MaNguoiDung, PhanLoai: elm.LoaiTaiKhoan}));
+       
+      global.Ma_Nguoi_Dung; 
+
+      global.Ma_Nguoi_Dung = Info_Account[0].MaNguoiDung;
+   
+      console.log("Ma nguoi dung:", global.Ma_Nguoi_Dung);
       // Send to res
       res.json(Info_Account);
    })
 
-
-   //TODO: Gửi thông báo lại cho client
 })
 
 

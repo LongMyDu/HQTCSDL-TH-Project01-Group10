@@ -398,7 +398,7 @@ sql.connect(config, err => {
       console.log('Failed to open a SQL Database connection.', err.stack);
       process.exit(1);
    }
-   var server = app.listen(8080, function () {
+   var server = app.listen(8081, function () {
       var host = server.address().address;
       var port = server.address().port;
      

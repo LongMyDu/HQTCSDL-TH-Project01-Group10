@@ -2,6 +2,7 @@
 -- T1: đăng nhập vào tài khoản 
 use DB_QLDatChuyenHang
 go 
+
 create proc DangNhap
 (	
 	@TK varchar(20),
@@ -11,35 +12,54 @@ create proc DangNhap
  
 as
 begin tran 	
-	SET TRAN ISOLATION LEVEL READ UNCOMMITTED
-	if (LEN(@TK) > 20) 
-		begin
-			raiserror(N'Tên đăng nhập không tồn tại', 16,1)
-			rollback tran 
-		end
+	SET TRAN ISOLATION LEVEL REPEATABLE READ
+	
 
-	else if (LEN(@MK) > 20) 
-		begin
-			raiserror(N'Sai mật khẩu', 16,1)
-			rollback tran 
-		end 
-
-	else if not exists(select * from TaiKhoan
+	if not exists(select * from TaiKhoan
 						where TaiKhoan.TenTaiKhoan = @TK and TaiKhoan.MatKhau = @MK) 
 		begin
 			raiserror (N'Sai tên đăng nhập hoặc mật khẩu', 16,1) 
 			rollback tran  
+			
 		end
 	else 
+		begin
 			print (N'Đăng nhập thành công')
+		end 
 
-	waitfor delay '00:00:10'
+		
+	waitfor delay '00:00:05' --delay 5s 
 
 	if not exists (select * from TaiKhoan 
 					where TaiKhoan.TenTaiKhoan = @TK and TaiKhoan.MatKhau = @MK)
 		begin 
 			raiserror(N'Không tìm thấy thông tin tài khoản này',16,1)
 			rollback tran  
+		end
+	else 
+		begin 
+			declare @Loai char(2),
+						@MaNguoiDung int
+				set @MaNguoiDung = -1
+				select @Loai = PhanLoai
+								from TaiKhoan
+								where TaiKhoan.TenTaiKhoan = @TK
+			
+			
+				if (@Loai = 'KH')
+					begin
+					
+						select @MaNguoiDung  = MaKH
+										from TaiKhoan tk join KhachHang  kh on tk.TenTaiKhoan = kh.TenTaiKhoan 
+					
+					end
+				else if (@Loai = 'DT')
+					begin
+						select @MaNguoiDung = dt.MaDoiTac 
+						from TaiKhoan tk join DOITAC dt on tk.TenTaiKhoan = dt.TenTaiKhoan
+					end 
+				select @MaNguoiDung as MaNguoiDung,
+						@Loai as LoaiTaiKhoan
 		end
 commit tran 
 

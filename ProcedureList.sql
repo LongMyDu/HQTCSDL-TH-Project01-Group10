@@ -246,17 +246,18 @@ begin tran
 	end
 GO
 
+
 -- Procedure Thêm sản phẩm mới
-create procedure Them_SANPHAM
-(
+create proc Them_1_Sp_VaoChiNhanh
+	(
+	@MaSP int, 
 	@TenSP nvarchar(100),
 	@Gia bigint,
-	@SoLuongTon int = NULL,
-	@MaChiNhanh int = NULL
-)
-as
+	@SoLuongTon int,
+	@MaChiNhanh int 
+	)
+	as
 begin tran
-	-- !!!Không cần kiểm tra MaChiNhanh vì đã có Foreign Key Constraint
 
 	if @Gia < 0
 	begin
@@ -265,8 +266,8 @@ begin tran
 	end
 	else
 	begin
-		insert into SANPHAM (TenSP, Gia, SoLuongTon, MaChiNhanh)
-		values (@TenSP, @Gia, @SoLuongTon, @MaChiNhanh)
+		insert into SANPHAM (MaSP, TenSP, Gia, SoLuongTon, MaChiNhanh)
+		values (@MaSP, @TenSP, @Gia, @SoLuongTon, @MaChiNhanh)
 		commit tran
 	end
 GO
@@ -562,8 +563,8 @@ begin tran
 	else 
 		begin 
 			declare @Loai char(2),
-						@MaKH int
-				set @MaKH = -1
+						@MaNguoiDung int
+				set @MaNguoiDung = -1
 				select @Loai = PhanLoai
 								from TaiKhoan
 								where TaiKhoan.TenTaiKhoan = @TK
@@ -572,15 +573,19 @@ begin tran
 				if (@Loai = 'KH')
 					begin
 					
-						select @MaKH  = MaKH
+						select @MaNguoiDung  = MaKH
 										from TaiKhoan tk join KhachHang  kh on tk.TenTaiKhoan = kh.TenTaiKhoan 
 					
 					end
-				select @MaKH as MaKH,
+				else if (@Loai = 'DT')
+					begin
+						select @MaNguoiDung = dt.MaDoiTac 
+						from TaiKhoan tk join DOITAC dt on tk.TenTaiKhoan = dt.TenTaiKhoan
+					end 
+				select @MaNguoiDung as MaNguoiDung,
 						@Loai as LoaiTaiKhoan
 		end
 commit tran 
-
 go 
 
 -- DoiMatKhau: đổi mật khẩu 

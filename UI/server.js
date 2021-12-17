@@ -326,9 +326,7 @@ app.post('/searchSP-post', async function (req, res) {
       tukhoa: req.body.TuKhoa
    };
     
-   //TODO: Check username và password có hợp lệ hay không, có thì đổi mật khẩu trong DB
    console.log("[searchSP-post] Từ khóa được gửi tới: ", response);
-
 
    sqlQuery = `exec Tim_SANPHAM_Ten N'${response.tukhoa}'`
    const request = new sql.Request(); 
@@ -337,7 +335,7 @@ app.post('/searchSP-post', async function (req, res) {
          res.status(500).send(err);
          return; 
       }
-      console.log(result);
+      console.log(result.recordset);
       var totalItems = result.recordset.length;
       const total_sanpham_list = result.recordset.map(elm => ({ id: elm.MaSP, tenSP: elm.TenSP, gia: elm.Gia, soLuongTon: elm.SoLuongTon, chiNhanh: elm.MaChiNhanh}));
       

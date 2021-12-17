@@ -11,7 +11,11 @@ const HtmlElements = {
     datHangButton: document.getElementById("dathang-button"),
     datHangForm: document.getElementById("dathang-form"),
     diachiInput: document.getElementById("diachi-input"),
-    htttInput: document.getElementById("httt-input")
+    htttInput: document.getElementById("httt-input"),
+
+    timKiemSPInput: document.getElementById("timkiemsp-input"),
+    timKiemSPButton: document.getElementById("timkiemsp-button"),
+    timKiemSPForm: document.getElementById("timkiemsp-form"),
 };
 
 
@@ -194,4 +198,26 @@ HtmlElements.datHangForm.addEventListener("submit", (e) => {
     request.send(data);
 })
 
+
+HtmlElements.timKiemSPForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    let tukhoa = HtmlElements.timKiemSPInput.value;
+
+    data = `TuKhoa=${tukhoa}`;
+    let request = new XMLHttpRequest();
+    request.open('POST', '/searchSP-post', true);
+    request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+    request.onreadystatechange = function() { 
+        // Call a function when the state changes.
+        if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+            // Request finished. Do processing here.
+            let message_received = JSON.parse(request.response);
+            console.log("Message received: ", message_received);
+            showData(message_received.totalItems, message_received.sanpham_list);
+        }
+    }
+    request.send(data);
+})
 

@@ -23,14 +23,14 @@ const { request } = require('express');
 //    trustServerCertificate: true,
 // };
 
-// const config = {
-//    user: 'sa',
-//    password: 'tkt',
-//    server: 'localhost', 
-//    port: 62437,
-//    database: 'DB_QLDatChuyenHang',
-//    trustServerCertificate: true,
-// };
+const config = {
+   user: 'sa',
+   password: 'tkt',
+   server: 'localhost', 
+   port: 62437,
+   database: 'DB_QLDatChuyenHang',
+   trustServerCertificate: true,
+};
 
 app.use(express.static('dist'));
 //Here we are configuring express to use body-parser as middle-ware.
@@ -59,18 +59,18 @@ function getCurrentDate(){
 }
 
 // Tạo mã đơn hàng
-function getIDofTable(id_name, table_name) {
+async function getIDofTable(id_name, table_name) {
    var maxID, newID;
    sqlQuery = `select top 1 ${id_name} from ${table_name} order by ${id_name} desc`; 
    console.log("queryID: ", sqlQuery);
 
    const request = new sql.Request(); 
-   request.query(sqlQuery, (err, maxID) => {
+   await request.query(sqlQuery, (err, maxID) => {
       if(err){
          console.log("can't get id from table"); 
          return; 
       }
-      console.log("max ID: ", maxID[0]);
+      console.log("max ID: ", maxID.recordset[0].MaDonHang);
    })
 
    newID = Number(maxID) + 1;

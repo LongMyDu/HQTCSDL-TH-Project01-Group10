@@ -6,15 +6,14 @@ const { request } = require('express');
 
 let newID;
 
-const config = {
-   user: 'sa',
-   password: 'lmd',
-   server: 'localhost', 
-   port: 51713,
-   database: 'DB_QLDatChuyenHang',
-   trustServerCertificate: true,
-};
-
+// const config = {
+//    user: 'sa',
+//    password: 'lmd',
+//    server: 'localhost', 
+//    port: 51713,
+//    database: 'DB_QLDatChuyenHang',
+//    trustServerCertificate: true,
+// };
 
 // const config = {
 //    user: 'sa',
@@ -25,14 +24,14 @@ const config = {
 //    trustServerCertificate: true,
 // };
 
-// const config = {
-//    user: 'sa',
-//    password: 'tkt',
-//    server: 'localhost', 
-//    port: 62437,
-//    database: 'DB_QLDatChuyenHang',
-//    trustServerCertificate: true,
-// };
+const config = {
+   user: 'sa',
+   password: 'tkt',
+   server: 'localhost', 
+   port: 62437,
+   database: 'DB_QLDatChuyenHang',
+   trustServerCertificate: true,
+};
 
 app.use(express.static('dist'));
 //Here we are configuring express to use body-parser as middle-ware.
@@ -89,7 +88,7 @@ app.post('/insert-order-post', async function (req, res) {
       httt :req.body.HTTT,
       diachi: req.body.DiaChi,
       phiVC: req.body.PhiVC,
-      khachhang: req.body.KhachHang,
+      khachhang: Ma_Nguoi_Dung,
       chinhanh: req.body.MaChiNhanh,
       ngaylap: getCurrentDate(),
       tongtien: req.body.TongTien,
@@ -101,8 +100,16 @@ app.post('/insert-order-post', async function (req, res) {
 
    sqlQuery = `
    begin tran
-   exec Them_DONHANG ${response.donhang}, N'${response.httt}', N'${response.diachi}', ${response.phiVC}, ${response.khachhang}, ${response.chinhanh}, '${response.ngaylap}'
-   commit tran`; 
+   exec Them_DONHANG ${response.donhang}, '${response.ngaylap}', N'${response.httt}', N'${response.diachi}', ${response.tongtien}, ${response.phiVC}, ${response.khachhang}, ${response.chinhanh}
+   `; 
+
+   response.cart_list.forEach(element => {
+      sqlQuery += `exec Them_CTDonHang ${element.id}, ${response.donhang}, ${element.soluong}, ${element.gia}
+   `;
+   });
+
+   sqlQuery += `commit tran`; 
+   console.log("CTDH: ", sqlQuery);
 
    const request = new sql.Request(); 
    request.query(sqlQuery, (err, result) => {
@@ -406,6 +413,3 @@ sql.connect(config, err => {
       console.log("Example app listening at http://%s:%s", host, port);
    });
 });
-
-
-

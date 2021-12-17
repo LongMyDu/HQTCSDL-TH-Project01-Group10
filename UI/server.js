@@ -89,7 +89,7 @@ app.post('/insert-order-post', async function (req, res) {
       httt :req.body.HTTT,
       diachi: req.body.DiaChi,
       phiVC: req.body.PhiVC,
-      khachhang:req.body.KhachHang,
+      khachhang: req.body.KhachHang,
       chinhanh: req.body.MaChiNhanh,
       ngaylap: getCurrentDate(),
       tongtien: req.body.TongTien,
@@ -99,12 +99,15 @@ app.post('/insert-order-post', async function (req, res) {
    //TODO: Thêm đơn hàng mới vào DB
    console.log("[insert-order-post] Đơn hàng được gửi tới: ", response);
 
-   sqlQuery = `exec Them_DONHANG ${response.donhang}, ${response.httt}, ${response.diachi}, ${response.phiVC}, ${response.khachhang}, ${response.chinhanh}, ${response.ngaylap}`; 
+   sqlQuery = `
+   begin tran
+   exec Them_DONHANG ${response.donhang}, N'${response.httt}', N'${response.diachi}', ${response.phiVC}, ${response.khachhang}, ${response.chinhanh}, '${response.ngaylap}'
+   commit tran`; 
 
    const request = new sql.Request(); 
    request.query(sqlQuery, (err, result) => {
       if(err){
-         res.send("Đơn hàng không hợp lệ"); 
+         res.send("Đơn hàng không hợp lệ\n" + err); 
          //res.status(500).send(err);
          return; 
       }

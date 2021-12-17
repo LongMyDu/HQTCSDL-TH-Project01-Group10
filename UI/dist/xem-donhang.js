@@ -38,7 +38,7 @@ const showDonHang = (donHang, index) => {
             <span>${donHang.id}</span>
         </div>
         <div class="col-2">
-            <span>${donHang.maKH}</span>
+            <span>${donHang.MaKH}</span>
         </div>
         <div class="col-3">
             <span>${donHang.tongTien}</span>
@@ -51,7 +51,7 @@ const showDonHang = (donHang, index) => {
         </div>
     </div>
     `
-    HtmlElements.sanPhamList.insertAdjacentHTML('beforeend', html);
+    HtmlElements.donHangList.insertAdjacentHTML('beforeend', html);
 }
 
 const showDonHangList = (donhang_list) => {

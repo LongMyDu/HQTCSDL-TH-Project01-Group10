@@ -1,7 +1,7 @@
 ﻿-- Lỗi: Unrepeatable Read
--- Transaction 1: Giảm giá 20% sản phẩm 1 nếu giá sản phẩm này dưới 500.000.
+-- Transaction 1: Tìm sản phẩm có chữ hữu cơ
 use DB_QLDatChuyenHang
 GO
 
 
-exec CapNhat_SANPHAM_GiamGiaCoDieuKien @MaSP = 1, @MucGiaToiDa = 500000,@PhanTramGiamGia = 20
+exec Tim_SANPHAM_Ten @TenSP=N'hữu cơ'

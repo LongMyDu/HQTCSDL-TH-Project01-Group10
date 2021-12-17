@@ -1,7 +1,6 @@
 ﻿use DB_QLDatChuyenHang
 GO
 
-
 -- Transaction 1: Tìm sản phẩm có chữ hữu cơ.
 alter procedure Tim_SANPHAM_Ten
 (
@@ -9,7 +8,7 @@ alter procedure Tim_SANPHAM_Ten
 )
 as
 begin tran
-	SET TRAN ISOLATION LEVEL READ UNCOMMITTED
+	SET TRAN ISOLATION LEVEL REPEATABLE READ
 	if exists 
 	(
 		Select * 
@@ -44,7 +43,7 @@ begin tran
 			raiserror('Không tìm thấy sản phẩm.', 16, 1)
 			rollback tran
 		end
-		
+	else
 		begin
 			update SANPHAM
 			set [TenSP] = @TenMoi

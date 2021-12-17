@@ -378,21 +378,35 @@ GO
 create procedure Them_DONHANG
 (
 	@MaDonHang int,
+	@NgayLap datetime,
 	@HinhThucThanhToan nvarchar(20),
 	@DiaChiGiaoHang nvarchar(50),
+	@PhiSP int,
 	@PhiVC int,
 	@MaKH int,
-	@MaChiNhanh int,
-	@NgayLap datetime
+	@MaChiNhanh int
 )
 as
 begin tran
 	-- !!!Không cần kiểm tra MaKH và MaChiNhanh vì đã có Foreign Key Constraint
-
-	insert into DONHANG (MaDonHang, HinhThucThanhToan, DiaChiGiaoHang, PhiVC, MaKH, MaChiNhanh, NgayLap, TinhTrangVanChuyen)
-	values (@MaDonHang, @HinhThucThanhToan, @DiaChiGiaoHang, @PhiVC, @MaKH, @MaChiNhanh, @NgayLap, N'Chờ xác nhận')
-	commit tran	
+	insert into DONHANG (MaDonHang, NgayLap, HinhThucThanhToan, DiaChiGiaoHang, PhiSP, PhiVC, MaKH, MaChiNhanh, TinhTrangVanChuyen)
+	values (@MaDonHang, CAST(@NgayLap AS DateTime), @HinhThucThanhToan, @DiaChiGiaoHang, @PhiSP, @PhiVC, @MaKH, @MaChiNhanh, N'Chờ xác nhận')
+commit tran	
 GO
+
+create procedure Them_CTDonHang
+(
+	@MaSP int, 
+	@MaDonHang int,
+	@SoLuong int,
+	@Gia bigint
+)
+as
+begin tran
+	insert into CHITIETDONHANG(MaSP, MaDonHang, SoLuong, Gia)
+	values (@MaSP, @MaDonHang, @SoLuong, @Gia)
+commit tran
+go
 
 --Procedure giảm giá X% của một sản phẩm nếu giá của sản phẩm đó dưới Y
 create procedure CapNhat_SANPHAM_GiamGiaCoDieuKien

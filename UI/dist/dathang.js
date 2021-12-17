@@ -215,7 +215,8 @@ HtmlElements.timKiemSPForm.addEventListener("submit", (e) => {
             // Request finished. Do processing here.
             let message_received = JSON.parse(request.response);
             console.log("Message received: ", message_received);
-            showData(message_received.totalItems, message_received.sanpham_list);
+            showData(message_received.totalResult, message_received.sanpham_list);
+            alert(message_received.kqTimKiem);
         }
     }
     request.send(data);

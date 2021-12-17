@@ -322,7 +322,7 @@ app.get('/api/donhang-list', function (req, res) {
 
    //TODO: sửa lại câu câu truy vấn này
    var sqlQuery = `exec XemTatCa_DONHANG_ThuocChiNhanh ${req.query.chinhanh}, N'${req.query.tinhtrang}'`;
-   console.log("sql :", sqlQuery);
+   
    //TODO: get donhang_list in DB
    const request = new sql.Request();
    request.query(sqlQuery, (err, result) => {
@@ -351,23 +351,25 @@ app.post('/searchSP-post', async function (req, res) {
     
    console.log("[searchSP-post] Từ khóa được gửi tới: ", response);
 
-   sqlQuery = `exec Tim_SANPHAM_Ten N'${response.tukhoa}'`
+   sqlQuery = `exec Tim_SANPHAM_Ten N'${response.tukhoa}'`;
    const request = new sql.Request(); 
-   request.query(sqlQuery, (err, result) => {
-      if(err){
-         res.status(500).send(err);
-         return; 
+   request.input('TenSP', sql.NVarChar,response.tukhoa);
+   request.output('KetQuaTimKiem', sql.NVarChar);
+   request.execute('Tim_SANPHAM_Ten', (err, result) => {
+      if (err)
+      {
+        res.status(500).send(err);
+        return;
       }
-      console.log(result.recordset);
-      var totalItems = result.recordset.length;
-      const total_sanpham_list = result.recordset.map(elm => ({ id: elm.MaSP, tenSP: elm.TenSP, gia: elm.Gia, soLuongTon: elm.SoLuongTon, chiNhanh: elm.MaChiNhanh}));
-      
-      // Send to res
-      res.json({totalItems: totalItems, sanpham_list: total_sanpham_list});
+      if (result.recordset)
+      {
+         const total_sanpham_list = result.recordset.map(elm => ({ id: elm.MaSP, tenSP: elm.TenSP, gia: elm.Gia, soLuongTon: elm.SoLuongTon, chiNhanh: elm.MaChiNhanh}));
+         res.json({totalResult: result.recordset.length, sanpham_list: total_sanpham_list, kqTimKiem: result.output.KetQuaTimKiem});
+      }
    })
-
 })
 
+  
 
 app.post('/capnhat-sp-ten-post', async function (req, res) {
    // Prepare output in JSON format
@@ -376,7 +378,6 @@ app.post('/capnhat-sp-ten-post', async function (req, res) {
       tensp: req.body.TenSP
    };
     
-   //TODO: Check username và password có hợp lệ hay không, có thì đổi mật khẩu trong DB
    console.log("[capnhat-sp-ten-post] Mã sp và tên sp được gửi tới: ", response);
 
    sqlQuery = `exec CapNhat_SANPHAM_Ten ${response.masp},  N'${response.tensp}'`
@@ -398,7 +399,7 @@ sql.connect(config, err => {
       console.log('Failed to open a SQL Database connection.', err.stack);
       process.exit(1);
    }
-   var server = app.listen(8081, function () {
+   var server = app.listen(8080, function () {
       var host = server.address().address;
       var port = server.address().port;
      

@@ -1,14 +1,20 @@
-
-
 const HtmlElements = {
     sanPhamList: document.getElementById('sanpham-list'),
     cartList: document.getElementById('cart-list'),
     chiNhanhInput: document.getElementById("chinhanh-input"),
     locButton: document.getElementById("loc-button"),
 
+    timKiemSPInput: document.getElementById("timkiemsp-input"),
+    timKiemSPButton: document.getElementById("timkiemsp-button"),
+    timKiemSPForm: document.getElementById("timkiemsp-form"),
+    
     themSLTonForm: document.getElementById("themSLton-form"),
     themSLTon_maSP_Input: document.getElementById("themSLton-masanpham-input"),
     themSLTon_SL_Input: document.getElementById("themSLton-SLton-input"),
+
+    capNhatTenSPForm: document.getElementById("capnhattenSP-form"),
+    capNhatTenSP_maSP_Input: document.getElementById("capnhattenSP-masanpham-input"),
+    capNhatTenSP_tenSP_Input: document.getElementById("capnhattenSP-tenSP-input"),
 
     capNhatGiaForm: document.getElementById("capnhatgia-form"),
     capNhatGia_maSP_Input: document.getElementById("capnhatgia-masanpham-input"),
@@ -140,7 +146,7 @@ HtmlElements.capNhatGiaForm.addEventListener("submit", (e) => {
 HtmlElements.giamGiaForm.addEventListener("submit", (e) => {
     e.preventDefault();
 
-    // Get mã sản phảm và giá bán mới 
+    // Get tỉ lệ giảm giá và chi nhánh
     let tile = HtmlElements.giamGiaTatCa_TiLe_Input.value;
     let chinhanh = HtmlElements.chiNhanhInput.value;
   
@@ -178,6 +184,50 @@ HtmlElements.themSPForm.addEventListener("submit", (e) => {
 
     let request = new XMLHttpRequest();
     request.open('POST', '/insert-product-post', true);
+    request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+    request.onreadystatechange = function() { 
+        // Call a function when the state changes.
+        if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+            // Request finished. Do processing here.
+            alert(request.responseText);
+        }
+    }
+    request.send(data);
+})
+
+HtmlElements.timKiemSPForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    let tukhoa = HtmlElements.timKiemSPInput.value;
+
+    data = `TuKhoa=${tukhoa}`;
+    let request = new XMLHttpRequest();
+    request.open('POST', '/searchSP-post', true);
+    request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+    request.onreadystatechange = function() { 
+        // Call a function when the state changes.
+        if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+            // Request finished. Do processing here.
+            let message_received = JSON.parse(request.response);
+            console.log("Message received: ", message_received);
+            showData(message_received.totalItems, message_received.sanpham_list);
+        }
+    }
+    request.send(data);
+})
+
+
+HtmlElements.capNhatTenSPForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    let masp = HtmlElements.capNhatTenSP_maSP_Input.value;
+    let tenSP = HtmlElements.capNhatTenSP_tenSP_Input.value;
+
+    data = `MaSP=${masp}&TenSP=${tenSP}`;
+    let request = new XMLHttpRequest();
+    request.open('POST', '/capnhat-sp-ten-post', true);
     request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
     request.onreadystatechange = function() { 

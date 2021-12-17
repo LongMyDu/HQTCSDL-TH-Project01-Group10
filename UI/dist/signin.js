@@ -29,7 +29,7 @@ HtmlElements.signInForm.addEventListener("submit", (e) => {
             let thongTinTaiKhoan = JSON.parse(request.response);
             console.log("thong tin tai khoan: ", thongTinTaiKhoan); 
             if(thongTinTaiKhoan[0].PhanLoai === 'KH'){
-                window.location.replace("/index.html");
+                window.location.replace("/dathang.html");
             }
             if(thongTinTaiKhoan[0].PhanLoai === 'DT'){
                 console.log("trang cho doi tac"); 

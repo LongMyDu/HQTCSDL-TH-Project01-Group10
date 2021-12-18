@@ -33,7 +33,7 @@ HtmlElements.signInForm.addEventListener("submit", (e) => {
             }
             if(thongTinTaiKhoan[0].PhanLoai === 'DT'){
                 console.log("trang cho doi tac"); 
-                // TODO: open doitac page
+                window.location.replace("/quanly-sanpham.html");
             }
         }
         if (this.readyState === XMLHttpRequest.DONE && this.status === 401) {

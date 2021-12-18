@@ -7,7 +7,7 @@ Danh sách các procedure đã tồn tại:
 	2. huy_TAIKHOAN
 	3. capnhat_TAIKHOAN_PhanLoai
 	4. CapNhat_SANPHAM_gia
-	5. Them_SANPHAM
+	5. Them_1_Sp_VaoChiNhanh
 	6. Them_DONHANG
 	7. CapNhat_SANPHAM_GiamGiaDongLoat
 	8. XemTatCa_SANPHAM_ThuocChiNhanh
@@ -17,6 +17,8 @@ Danh sách các procedure đã tồn tại:
 	12. Them_SanPham_SoLuong: Thêm số lượng x sản phẩm y
 	13. DangNhap: Đăng nhập 
 	14. DoiMatKhau: Đổi mật khẩu 
+	15. Tim_SANPHAM_Ten: tìm sản phẩm có tên chứa từ khóa
+	16. CapNhat_SANPHAM_Ten: cập nhật tên của 1 sản phẩm
 */
 
 
@@ -272,8 +274,28 @@ begin tran
 	end
 GO
 
+
+-- Transaction 2: Thêm đơn hàng mới thuộc chi nhánh 1.
+create procedure Them_DONHANG
+(
+	@MaDonHang int,
+	@HinhThucThanhToan nvarchar(20),
+	@DiaChiGiaoHang nvarchar(50),
+	@PhiVC int,
+	@MaKH int,
+	@MaChiNhanh int,
+	@NgayLap datetime
+)
+as
+begin tran
+	-- !!!Không cần kiểm tra MaKH và MaChiNhanh vì đã có Foreign Key Constraint
+	insert into DONHANG (MaDonHang, HinhThucThanhToan, DiaChiGiaoHang, PhiVC, MaKH, MaChiNhanh, NgayLap, TinhTrangVanChuyen)
+	values (@MaDonHang, @HinhThucThanhToan, @DiaChiGiaoHang, @PhiVC, @MaKH, @MaChiNhanh, @NgayLap, N'Chờ xác nhận')
+	commit tran
+
+
 -- Procedure giảm giá lượng phần trăm X cho tất cả sản phẩm được cung cấp bởi một chi nhánh Y
-create procedure CapNhat_SANPHAM_GiamGiaDongLoat
+alter procedure CapNhat_SANPHAM_GiamGiaDongLoat
 (
 	@MaChiNhanh int,
 	@PhanTramGiamGia int = 0
@@ -291,26 +313,22 @@ begin tran
 		rollback tran
 	end
 	else 
-
 	begin
-		Declare @TongSoSanPham bigint
-		Set @TongSoSanPham = (Select count(*) From SANPHAM Where MaChiNhanh = @MaChiNhanh)
-		Print N'Tổng số sản phẩm được cập nhật: ' + CAST(@TongSoSanPham AS VARCHAR(15))
-
 		update SANPHAM 
 		set Gia = convert(bigint, Gia * (100 - @PhanTramGiamGia) /100)
 		where MaChiNhanh = @MaChiNhanh
-		
 	end
-		
-	if @PhanTramGiamGia > 100
+	Declare @Suco bit = 0
+	if (@Suco = 1)
 	begin
-		raiserror('Phần trăm giảm giá không hợp lệ', 16, 1);
+		raiserror('Đã xảy ra sự cố', 16, 1);
 		rollback tran
-	end			
+	end
 	else
 		commit tran
+
 GO
+
 
 --Procedure xem tất cả sản phẩm của chi nhánh X
 create procedure XemTatCa_SANPHAM_ThuocChiNhanh
@@ -634,3 +652,62 @@ else
 		print N'Đổi mật khẩu thành công'
 		commit tran 
 	end 
+
+create procedure Tim_SANPHAM_Ten
+(
+	@TenSP nvarchar(100),
+	@KetQuaTimKiem nvarchar(100) OUTPUT
+)
+as
+begin tran
+	if exists 
+	(
+		Select * 
+		From SANPHAM SP
+		Where SP.TenSP LIKE ('%' + @TenSP + '%')
+	)
+	begin
+		Set @KetQuaTimKiem = (N'Tồn tại kết quả')
+		print @KetQuaTimKiem
+
+		WAITFOR DELAY '00:00:10'
+		Select * 
+		From SANPHAM SP
+		Where SP.TenSP LIKE ('%' + @TenSP + '%')
+	end
+	else
+	begin
+		Set @KetQuaTimKiem = N'Không tồn tại kết quả' 
+	end
+	commit tran
+GO
+
+
+-- Transaction 2: Thay đổi tên của sản phẩm 1 thành 'Hạt hạnh nhân'.
+create procedure CapNhat_SANPHAM_Ten
+(
+	@MaSP int,
+	@TenMoi nvarchar(100)
+)
+as
+begin tran
+	if not exists 
+		(
+			select*
+			from SANPHAM SP
+			where SP.MaSP = @MaSP
+		)
+		begin
+			raiserror('Không tìm thấy sản phẩm.', 16, 1)
+			rollback tran
+		end
+	else
+		begin
+			update SANPHAM
+			set [TenSP] = @TenMoi
+			where [MaSP] = @MaSP
+
+			commit tran
+		end
+
+GO

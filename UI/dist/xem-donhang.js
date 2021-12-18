@@ -23,6 +23,7 @@ const sendGetDonHangListRequest = (chinhanh, tinhtrang, callback) => {
         let message_received = JSON.parse(request.response);
         console.log("Danh sách đơn hàng nhận được: ", message_received);
         callback(message_received.totalItems, message_received.donhang_list);
+        alert("Tổng số đơn hàng: " + message_received.SLdonhang);
     };
     request.send();
 }

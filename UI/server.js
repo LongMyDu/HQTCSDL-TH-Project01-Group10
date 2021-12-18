@@ -6,14 +6,14 @@ const { request } = require('express');
 
 let newID;
 
-// const config = {
-//    user: 'sa',
-//    password: 'lmd',
-//    server: 'localhost', 
-//    port: 51713,
-//    database: 'DB_QLDatChuyenHang',
-//    trustServerCertificate: true,
-// };
+const config = {
+   user: 'sa',
+   password: 'lmd',
+   server: 'localhost', 
+   port: 51713,
+   database: 'DB_QLDatChuyenHang',
+   trustServerCertificate: true,
+};
 
 // const config = {
 //    user: 'sa',
@@ -302,11 +302,12 @@ app.post('/changepass-post', async function (req, res) {
 
 
 app.get('/api/sanpham-list', function (req, res) {
-    var sqlQuery = `exec XemTatCa_SANPHAM_ThuocChiNhanh ${req.query.chinhanh}`
+
+   var sqlQuery = `exec XemTatCa_SANPHAM_ThuocChiNhanh ${req.query.chinhanh}`
 
     // TODO: get sanpham_list in DB
-    const request = new sql.Request();
-    request.query(sqlQuery, (err, result) => {
+   const request = new sql.Request();
+   request.query(sqlQuery, (err, result) => {
       if (err)
       {
         res.status(500).send(err);
@@ -325,28 +326,46 @@ app.get('/api/sanpham-list', function (req, res) {
 app.get('/api/donhang-list', function (req, res) {
    let chinhanh = req.query.chinhanh;
    let tinhtrang = req.query.tinhtrang;
-   console.log("[get donhang-list] Chi nhánh: ", chinhanh, "Tình trạng: ", tinhtrang);
 
-   //TODO: sửa lại câu câu truy vấn này
-   var sqlQuery = `exec XemTatCa_DONHANG_ThuocChiNhanh ${req.query.chinhanh}, N'${req.query.tinhtrang}'`;
+   const request = new sql.Request(); 
+   request.input('MaChiNhanh', sql.Int, chinhanh);
+   request.input('TinhTrang', sql.NVarChar, tinhtrang);
+   request.output('SoDonHang', sql.Int);
+   request.execute('XemTatCa_DONHANG_ThuocChiNhanh', (err, result) => {
+      if (err)
+      {
+        res.status(500).send(err);
+        return;
+      }
+      if (result.recordset)
+      {
+         const donhang_list = result.recordset.map(elm => ({ id: elm.MaDonHang, MaKH: elm.MaKH, tongTien: elm.PhiSP, tinhTrang: elm.TinhTrangVanChuyen, maCN: elm.MaChiNhanh}));
+         res.json({SLdonhang: result.output.SoDonHang, donhang_list: donhang_list});
+      }
+   })
    
-   //TODO: get donhang_list in DB
-   const request = new sql.Request();
-   request.query(sqlQuery, (err, result) => {
-     if (err)
-     {
-       res.status(500).send(err);
-       return;
-     }
-     // Số lượng kết quả trả về
-     var totalResult = result.recordset.length; 
+//    console.log("[get donhang-list] Chi nhánh: ", chinhanh, "Tình trạng: ", tinhtrang);
+
+//    //TODO: sửa lại câu câu truy vấn này
+//    var sqlQuery = `exec XemTatCa_DONHANG_ThuocChiNhanh ${req.query.chinhanh}, N'${req.query.tinhtrang}'`;
+   
+//    //TODO: get donhang_list in DB
+//    const request = new sql.Request();
+//    request.query(sqlQuery, (err, result) => {
+//      if (err)
+//      {
+//        res.status(500).send(err);
+//        return;
+//      }
+//      // Số lượng kết quả trả về
+//      var totalResult = result.recordset.length; 
      
-     //TODO: sửa lại câu này
-     const donhang_list = result.recordset.map(elm => ({ id: elm.MaDonHang, MaKH: elm.MaKH, tongTien: elm.PhiSP, tinhTrang: elm.TinhTrangVanChuyen, maCN: elm.MaChiNhanh}));
+//      //TODO: sửa lại câu này
+//      const donhang_list = result.recordset.map(elm => ({ id: elm.MaDonHang, MaKH: elm.MaKH, tongTien: elm.PhiSP, tinhTrang: elm.TinhTrangVanChuyen, maCN: elm.MaChiNhanh}));
      
-     // Send to res
-     res.json({SLdonhang: totalResult, donhang_list: donhang_list});
-  });
+//      // Send to res
+//      res.json({SLdonhang: totalResult, donhang_list: donhang_list});
+//   });
 })
 
 
@@ -358,7 +377,6 @@ app.post('/searchSP-post', async function (req, res) {
     
    console.log("[searchSP-post] Từ khóa được gửi tới: ", response);
 
-   sqlQuery = `exec Tim_SANPHAM_Ten N'${response.tukhoa}'`;
    const request = new sql.Request(); 
    request.input('TenSP', sql.NVarChar,response.tukhoa);
    request.output('KetQuaTimKiem', sql.NVarChar);

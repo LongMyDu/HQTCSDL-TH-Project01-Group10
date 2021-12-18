@@ -24,14 +24,14 @@ let newID;
 //    trustServerCertificate: true,
 // };
 
-const config = {
-   user: 'sa',
-   password: 'tkt',
-   server: 'localhost', 
-   port: 62437,
-   database: 'DB_QLDatChuyenHang',
-   trustServerCertificate: true,
-};
+// const config = {
+//    user: 'sa',
+//    password: 'tkt',
+//    server: 'localhost', 
+//    port: 62437,
+//    database: 'DB_QLDatChuyenHang',
+//    trustServerCertificate: true,
+// };
 
 app.use(express.static('dist'));
 //Here we are configuring express to use body-parser as middle-ware.

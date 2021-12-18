@@ -11,8 +11,8 @@ alter proc DangNhap
 )
  
 as
-begin tran 	
-	SET TRAN ISOLATION LEVEL READ UNCOMMITTED	
+begin tran 
+	SET TRAN ISOLATION LEVEL REPEATABLE READ
 
 	if exists(select * from TaiKhoan
 						where TaiKhoan.TenTaiKhoan = @TK and TaiKhoan.MatKhau = @MK) 

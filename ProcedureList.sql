@@ -312,13 +312,15 @@ GO
 
 
 --Procedure xem tất cả sản phẩm của chi nhánh X
-create procedure XemTatCa_SANPHAM_ThuocChiNhanh
+
+create proc XemTatCa_SANPHAM_ThuocChiNhanh
 (
 	@MaChiNhanh int
 )
 as
-begin tran
-	if @MaChiNhanh != NULL and not exists 
+begin tran 
+
+if @MaChiNhanh != NULL and not exists 
 	(
 		select *
 		from CHINHANH CN
@@ -328,14 +330,15 @@ begin tran
 		raiserror('Không tìm thấy chi nhánh.', 16, 1);
 		rollback tran
 	end
-	else 
-	begin
-		Select *
-		From SANPHAM
-		Where MaChiNhanh = @MaChiNhanh
-		commit tran
-	end
-GO
+declare @TongSoSP int 
+	set @TongSoSP = (select count (sp.MaSP) from SANPHAM sp 
+						where sp.MaChiNhanh = @MaChiNhanh)
+	print N'Có ' + cast (@TongSoSP as nvarchar(10))+N' sản phẩm'
+
+	select  * from SANPHAM sp where sp.MaChiNhanh = @MaChiNhanh 
+	select @TongSoSP as Tongso
+	commit tran
+
 
 --Procedure xem tất cả đơn hàng của chi nhánh X có tình trạng vận chuyển Y
 create procedure XemTatCa_DONHANG_ThuocChiNhanh
@@ -503,54 +506,47 @@ create proc DangNhap
  
 as
 begin tran 	
-	SET TRAN ISOLATION LEVEL REPEATABLE READ
-	
 
-	if not exists(select * from TaiKhoan
+	if exists(select * from TaiKhoan
 						where TaiKhoan.TenTaiKhoan = @TK and TaiKhoan.MatKhau = @MK) 
-		begin
-			raiserror (N'Sai tên đăng nhập hoặc mật khẩu', 16,1) 
-			rollback tran  
-			
-		end
-	else 
+		
 		begin
 			print (N'Đăng nhập thành công')
-		end 
 
-
-	if not exists (select * from TaiKhoan 
+		if not exists (select * from TaiKhoan 
 					where TaiKhoan.TenTaiKhoan = @TK and TaiKhoan.MatKhau = @MK)
-		begin 
-			raiserror(N'Không tìm thấy thông tin tài khoản này',16,1)
-			rollback tran  
-		end
-	else 
-		begin 
-			declare @Loai char(2),
+			begin 
+				
+				raiserror(N'Không tìm thấy thông tin tài khoản này',16,1)
+				rollback Tran  
+			end
+		else 
+			begin 
+				declare @Loai char(2),
 						@MaNguoiDung int
 				set @MaNguoiDung = -1
 				select @Loai = PhanLoai
-								from TaiKhoan
-								where TaiKhoan.TenTaiKhoan = @TK
-			
-			
-				if (@Loai = 'KH')
-					begin
-					
-						select @MaNguoiDung  = MaKH
-										from TaiKhoan tk join KhachHang  kh on tk.TenTaiKhoan = kh.TenTaiKhoan 
-					
-					end
-				else if (@Loai = 'DT')
-					begin
-						select @MaNguoiDung = dt.MaDoiTac 
-						from TaiKhoan tk join DOITAC dt on tk.TenTaiKhoan = dt.TenTaiKhoan
-					end 
-				select @MaNguoiDung as MaNguoiDung,
-						@Loai as LoaiTaiKhoan
+				from TaiKhoan
+				where TaiKhoan.TenTaiKhoan = @TK
+					if (@Loai = 'KH')
+						begin
+							select @MaNguoiDung  = MaKH
+							from TaiKhoan tk join KhachHang  kh on tk.TenTaiKhoan = kh.TenTaiKhoan 
+						end
+					else if (@Loai = 'DT')
+						begin
+							select @MaNguoiDung = dt.MaDoiTac 
+							from TaiKhoan tk join DOITAC dt on tk.TenTaiKhoan = dt.TenTaiKhoan
+						end 
+					select @MaNguoiDung as MaNguoiDung,
+							@Loai as LoaiTaiKhoan
+			end
+	end
+	else 
+		begin 
+			raiserror(N'Tài khoản hoặc mật khẩu không đúng',16,1);
 		end
-commit tran 
+ IF @@TRANCOUNT > 0 COMMIT TRAN
 go 
 
 -- DoiMatKhau: đổi mật khẩu 

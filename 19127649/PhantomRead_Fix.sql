@@ -8,7 +8,7 @@ alter proc XemTatCa_SANPHAM_ThuocChiNhanh
 as
 begin tran 
 
-	SET TRAN ISOLATION LEVEL READ UNCOMMITTED	
+	SET TRAN ISOLATION LEVEL SERIALIZABLE
 if @MaChiNhanh != NULL and not exists 
 	(
 		select *
@@ -22,14 +22,13 @@ if @MaChiNhanh != NULL and not exists
 declare @TongSoSP int 
 	set @TongSoSP = (select count (sp.MaSP) from SANPHAM sp 
 						where sp.MaChiNhanh = @MaChiNhanh)
-	--print N'Có ' + cast (@SoSanPham as nvarchar(10))+N' sản phẩm'
+	print N'Có ' + cast (@TongSoSP as nvarchar(10))+N' sản phẩm'
 
 	waitfor delay '00:00:10' --delay 10s 
 	select  * from SANPHAM sp where sp.MaChiNhanh = @MaChiNhanh 
 	select @TongSoSP as Tongso
 	commit tran
-
-go 
+go
 --Transaction 2 : đối tác thêm một sản phẩm vào chi nhánh 1 
 alter proc Them_1_Sp_VaoChiNhanh
 	(

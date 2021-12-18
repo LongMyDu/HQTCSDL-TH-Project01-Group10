@@ -6,14 +6,14 @@ const { request } = require('express');
 
 let newID;
 
-const config = {
-   user: 'sa',
-   password: 'lmd',
-   server: 'localhost', 
-   port: 51713,
-   database: 'DB_QLDatChuyenHang',
-   trustServerCertificate: true,
-};
+// const config = {
+//    user: 'sa',
+//    password: 'lmd',
+//    server: 'localhost', 
+//    port: 51713,
+//    database: 'DB_QLDatChuyenHang',
+//    trustServerCertificate: true,
+// };
 
 // const config = {
 //    user: 'sa',
@@ -254,8 +254,7 @@ app.post('/signin-post', async function (req, res) {
    const request = new sql.Request(); 
    request.query(sqlQuery, (err, result) => {
       if(err){
-         console.log(err);
-         res.status(401).send("Tài khoản hoặc mật khẩu không chính xác"); 
+         res.status(401).send(err.originalError.message); 
          return; 
       }  
       // Trả về client thông tin mã KH và loại người dùng
@@ -314,11 +313,12 @@ app.get('/api/sanpham-list', function (req, res) {
         res.status(500).send(err);
         return;
       }
+      console.log("result: ", result.recordsets[1]);
       var totalItems = result.recordset.length;
       const total_sanpham_list = result.recordset.map(elm => ({ id: elm.MaSP, tenSP: elm.TenSP, gia: elm.Gia, soLuongTon: elm.SoLuongTon, chiNhanh: elm.MaChiNhanh}));
-      
+      const tongSP_Ao = result.recordsets[1].map(elm => ({ tongso: elm.Tongso}));
       // Send to res
-      res.json({totalItems: totalItems, sanpham_list: total_sanpham_list});
+      res.json({totalItems: totalItems,tongSP_Ao:tongSP_Ao,  sanpham_list: total_sanpham_list});
    });
 })
 

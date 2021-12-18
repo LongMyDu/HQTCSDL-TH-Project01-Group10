@@ -10,7 +10,7 @@ alter procedure XemTatCa_DONHANG_ThuocChiNhanh
 )
 as
 begin tran
-	SET TRAN ISOLATION LEVEL REPEATABLE READ
+	SET TRAN ISOLATION LEVEL SERIALIZABLE
 	if @MaChiNhanh != NULL and not exists 
 	(
 		select *

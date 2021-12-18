@@ -341,7 +341,8 @@ GO
 create procedure XemTatCa_DONHANG_ThuocChiNhanh
 (
 	@MaChiNhanh int,
-	@TinhTrang nvarchar(50)
+	@TinhTrang nvarchar(50),
+	@SoDonHang int OUTPUT
 )
 as
 begin tran
@@ -357,20 +358,20 @@ begin tran
 	end
 	else 
 	begin
-		Declare @SoDonHangChoXacNhan int
-		Set @SoDonHangChoXacNhan = (
+		Set @SoDonHang = (
 			Select count(*)
 			From DONHANG
 			Where MaChiNhanh = @MaChiNhanh and TinhTrangVanChuyen = @TinhTrang
 		)
 		
-		Print N'Tổng số đơn hàng trong tình trạng ' + @TinhTrang + ': ' + CAST(@SoDonHangChoXacNhan AS VARCHAR(10))
-
+		Print N'Tổng số đơn hàng trong tình trạng "' + @TinhTrang + '": ' + CAST(@SoDonHang AS VARCHAR(10))
+		
 		Select *
 		From DONHANG
 		Where MaChiNhanh = @MaChiNhanh and TinhTrangVanChuyen = @TinhTrang
 		commit tran
 	end
+
 GO
 
 --Procedure thêm đơn hàng mới 

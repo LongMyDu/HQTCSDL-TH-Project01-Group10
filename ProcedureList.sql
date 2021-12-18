@@ -274,28 +274,8 @@ begin tran
 	end
 GO
 
-
--- Transaction 2: Thêm đơn hàng mới thuộc chi nhánh 1.
-create procedure Them_DONHANG
-(
-	@MaDonHang int,
-	@HinhThucThanhToan nvarchar(20),
-	@DiaChiGiaoHang nvarchar(50),
-	@PhiVC int,
-	@MaKH int,
-	@MaChiNhanh int,
-	@NgayLap datetime
-)
-as
-begin tran
-	-- !!!Không cần kiểm tra MaKH và MaChiNhanh vì đã có Foreign Key Constraint
-	insert into DONHANG (MaDonHang, HinhThucThanhToan, DiaChiGiaoHang, PhiVC, MaKH, MaChiNhanh, NgayLap, TinhTrangVanChuyen)
-	values (@MaDonHang, @HinhThucThanhToan, @DiaChiGiaoHang, @PhiVC, @MaKH, @MaChiNhanh, @NgayLap, N'Chờ xác nhận')
-	commit tran
-
-
 -- Procedure giảm giá lượng phần trăm X cho tất cả sản phẩm được cung cấp bởi một chi nhánh Y
-alter procedure CapNhat_SANPHAM_GiamGiaDongLoat
+create procedure CapNhat_SANPHAM_GiamGiaDongLoat
 (
 	@MaChiNhanh int,
 	@PhanTramGiamGia int = 0
@@ -317,16 +297,17 @@ begin tran
 		update SANPHAM 
 		set Gia = convert(bigint, Gia * (100 - @PhanTramGiamGia) /100)
 		where MaChiNhanh = @MaChiNhanh
-	end
-	Declare @Suco bit = 0
-	if (@Suco = 1)
-	begin
-		raiserror('Đã xảy ra sự cố', 16, 1);
-		rollback tran
-	end
-	else
-		commit tran
 
+		Declare @Suco bit = 0
+		if (@Suco = 1)
+		begin
+			raiserror('Đã xảy ra sự cố', 16, 1);
+			rollback tran
+		end
+		else
+			commit tran
+	end
+	
 GO
 
 
@@ -426,55 +407,6 @@ begin tran
 commit tran
 go
 
---Procedure giảm giá X% của một sản phẩm nếu giá của sản phẩm đó dưới Y
-create procedure CapNhat_SANPHAM_GiamGiaCoDieuKien
-(
-	@MaSP int,
-	@MucGiaToiDa bigint,
-	@PhanTramGiamGia int
-)
-as
-begin tran
-	if not exists 
-	(
-		select *
-		from SANPHAM SP
-		where SP.MaSP = @MaSP
-	)
-	begin
-		raiserror('Không tìm thấy sản phẩm.', 16, 1)
-		rollback tran
-	end
-
-	else if @MucGiaToiDa < 0
-	begin
-		raiserror('Mức giá tối đa của sản phẩm không hợp lệ.', 16, 1)
-		rollback tran
-	end
-
-	else
-	begin
-		Declare @GiaHienTai bigint
-		Set @GiaHienTai = (Select Gia From SanPham Where MaSP = @MaSP)
-
-		if (@GiaHienTai < @MucGiaToiDa)
-		begin
-			Declare @GiaChuaGiam bigint
-			Set @GiaChuaGiam = (Select Gia From SanPham Where MaSP = @MaSP)
-
-			Declare @GiaDaGiam bigint
-			Set @GiaDaGiam = CAST(@GiaChuaGiam * (100 - @PhanTramGiamGia) / 100 as bigint)
-
-			update SANPHAM 
-			set Gia = @GiaDaGiam
-			where MaSP = @MaSP
-
-			commit tran
-		end
-		else
-			rollback tran
-	end
-GO
 
 --Procedure Bán số lượng x sản phẩm y
 Create procedure Ban_SanPham_SoLuong
@@ -631,8 +563,6 @@ create proc DoiMatKhau
 )
 as
 begin tran  
-
-
 if not exists(select * from TaiKhoan where taikhoan.TenTaiKhoan = @TK and TaiKhoan.MatKhau = @MK ) 
 	begin 
 		raiserror(N'Tài khoản hoặc mật khẩu không chính xác',16,1) 
@@ -652,7 +582,7 @@ else
 		print N'Đổi mật khẩu thành công'
 		commit tran 
 	end 
-
+GO
 create procedure Tim_SANPHAM_Ten
 (
 	@TenSP nvarchar(100),

@@ -54,8 +54,8 @@ const showSanPham = (sanPham, index) => {
         <div class="col-2">
             <span id="item-gia-${index}">${sanPham.gia}</span>
         </div>
-        <div class="col-1">
-            <span id="item-chinhanh-${index}">${sanPham.soLuongTon}</span>
+        <div class="col-2">
+            <span id="item-slton-${index}">${sanPham.soLuongTon}</span>
         </div>
         <div class="col-1">
             <span id="item-chinhanh-${index}">${sanPham.chiNhanh}</span>

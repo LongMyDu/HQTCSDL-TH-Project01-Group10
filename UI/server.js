@@ -105,6 +105,7 @@ app.post('/insert-order-post', async function (req, res) {
 
    response.cart_list.forEach(element => {
       sqlQuery += `exec Them_CTDonHang ${element.id}, ${response.donhang}, ${element.soluong}, ${element.gia}
+      exec Ban_SanPham_SoLuong ${element.id}, ${element.soluong}
    `;
    });
 

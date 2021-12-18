@@ -13,7 +13,7 @@ begin tran
 	if not exists 
 	(
 		select*
-		from SANPHAM SP
+		from SANPHAM SP with (Updlock)
 		where SP.MaSP = @MaSP
 	)
 	begin
@@ -49,7 +49,7 @@ begin tran
 	if not exists 
 	(
 		select *
-		from CHINHANH CN
+		from CHINHANH CN with (Updlock)
 		where CN.MaChiNhanh = @MaChiNhanh
 	)
 	begin

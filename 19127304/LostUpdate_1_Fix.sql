@@ -11,11 +11,10 @@ as
 SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
 Begin Tran
 	Declare @soluongton int
-
 	if not exists
 	(
 		select *
-		from SANPHAM SP
+		from SANPHAM SP with (Updlock)
 		where SP.MaSP = @masp
 	)
 	Begin
@@ -26,7 +25,8 @@ Begin Tran
 	else
 	Begin
 		Set @soluongton =(select SoLuongTon
-							from SANPHAM where MaSP = @masp)
+							from SANPHAM with (Updlock)
+							where MaSP = @masp)
 
 		Set @soluongton = @soluongton - @soluongban
 
@@ -64,7 +64,7 @@ Begin Tran
 	if not exists
 	(
 		select *
-		from SANPHAM SP
+		from SANPHAM SP with (Updlock)
 		where SP.MaSP = @masp
 	)
 	Begin
@@ -75,7 +75,8 @@ Begin Tran
 	else
 	Begin
 		Select @soluongton =(select SoLuongTon
-							from SANPHAM where MaSP = @masp)
+							from SANPHAM with (Updlock)
+							where MaSP = @masp)
 
 		Waitfor DELAY '00:00:02'
 		Set @soluongton = @soluongton + @soluongthem

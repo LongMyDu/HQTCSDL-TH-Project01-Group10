@@ -47,7 +47,7 @@ alter procedure XemTatCa_SANPHAM_ThuocChiNhanh
 as
 begin tran
 	
-	SET TRAN ISOLATION LEVEL READ UNCOMMITTED		
+	SET TRAN ISOLATION LEVEL READ COMMITTED		
 	if @MaChiNhanh != NULL and not exists 
 	(
 		select *

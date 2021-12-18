@@ -4,4 +4,4 @@
 USE DB_QLDatChuyenHang
 GO
 
-exec Them_DONHANG @HinhThucThanhToan = N'Tiền mặt', @DiaChiGiaoHang = N'402 Nguyễn Thị Minh Khai, Q.1',@PhiVC = 30000,@MaChiNhanh = 1,@MaKH = 1, @NgayLap = '11/20/2021'
+exec Them_DONHANG @MaDonHang = 4, @HinhThucThanhToan = N'Tiền mặt', @DiaChiGiaoHang = N'402 Nguyễn Thị Minh Khai, Q.1',@PhiVC = 30000,@MaChiNhanh = 1,@MaKH = 1, @NgayLap = '11/20/2021'

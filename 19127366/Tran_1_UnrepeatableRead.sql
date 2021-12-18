@@ -3,5 +3,5 @@
 use DB_QLDatChuyenHang
 GO
 
-
-exec Tim_SANPHAM_Ten @TenSP=N'hữu cơ'
+Declare @KetQuaTimKiem nvarchar(100)
+exec Tim_SANPHAM_Ten @TenSP=N'hữu cơ', @KetQuaTimKiem = null

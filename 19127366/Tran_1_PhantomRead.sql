@@ -4,4 +4,6 @@
 USE DB_QLDatChuyenHang
 GO
 
-exec XemTatCa_DONHANG_ThuocChiNhanh @MaChiNhanh = 1, @TinhTrang = N'Chờ xác nhận'
+
+Declare @SoDonHang int
+exec XemTatCa_DONHANG_ThuocChiNhanh @MaChiNhanh = 1, @TinhTrang = N'Chờ xác nhận', @SoDonHang = 0

@@ -5,4 +5,3 @@ USE DB_QLDatChuyenHang
 GO
 
 exec XemTatCa_SANPHAM_ThuocChiNhanh	@MaChiNhanh = 1
-	

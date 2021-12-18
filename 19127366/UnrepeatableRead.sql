@@ -5,7 +5,8 @@ GO
 -- Transaction 1: Tìm sản phẩm có chữ hữu cơ.
 alter procedure Tim_SANPHAM_Ten
 (
-	@TenSP nvarchar(100)
+	@TenSP nvarchar(100),
+	@KetQuaTimKiem nvarchar(100) OUTPUT
 )
 as
 begin tran
@@ -17,11 +18,17 @@ begin tran
 		Where SP.TenSP LIKE ('%' + @TenSP + '%')
 	)
 	begin
-		print(N'Tồn tại sản phẩm có tên ' + @TenSP);
+		Set @KetQuaTimKiem = (N'Tồn tại kết quả')
+		print @KetQuaTimKiem
+
 		WAITFOR DELAY '00:00:10'
 		Select * 
 		From SANPHAM SP
 		Where SP.TenSP LIKE ('%' + @TenSP + '%')
+	end
+	else
+	begin
+		Set @KetQuaTimKiem = N'Không tồn tại kết quả' 
 	end
 	commit tran
 GO
@@ -44,7 +51,7 @@ begin tran
 			raiserror('Không tìm thấy sản phẩm.', 16, 1)
 			rollback tran
 		end
-		
+	else
 		begin
 			update SANPHAM
 			set [TenSP] = @TenMoi

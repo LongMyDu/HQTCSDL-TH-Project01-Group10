@@ -2,7 +2,7 @@
 GO
 
 -- Transaction 1: Thay đổi giá bán của sản phẩm '100066' thành 120.000đ
-Create procedure CapNhat_SANPHAM_gia
+alter procedure CapNhat_SANPHAM_gia
 (
 	@MaSP int,
 	@GiaMoi bigint
@@ -28,7 +28,7 @@ begin tran
 
 	else
 	begin
-		Waitfor DELAY '00:00:12'
+		Waitfor DELAY '00:00:05'
 		update SANPHAM
 		set [Gia] = @GiaMoi
 		where [MaSP] = @MaSP
@@ -37,7 +37,7 @@ commit tran
 Go
 
 -- Transaction 2: Giảm giá 10% tất cả sản phẩm của chi nhánh '100043'
-Create procedure CapNhat_SANPHAM_GiamGiaDongLoat
+alter procedure CapNhat_SANPHAM_GiamGiaDongLoat
 (
 	@MaChiNhanh int,
 	@PhanTramGiamGia int = 0
@@ -57,7 +57,7 @@ begin tran
 
 	else 
 	begin
-		Waitfor DELAY '00:00:03'
+		Waitfor DELAY '00:00:02'
 		update SANPHAM 
 		set Gia = convert(bigint, Gia * (100 - @PhanTramGiamGia) /100)
 		where MaChiNhanh = @MaChiNhanh

@@ -45,7 +45,7 @@ const clearCartList = () => {
 const showSanPham = (sanPham, index) => {
     let html = `
     <div class="row my-3 border rounded-pill py-2">
-        <div id="item-id-${index}" class="col-2">
+        <div id="item-id-${index}" class="col-1">
             <span>${sanPham.id}</span>
         </div>
         <div class="col-5">
@@ -54,7 +54,10 @@ const showSanPham = (sanPham, index) => {
         <div class="col-2">
             <span id="item-gia-${index}">${sanPham.gia}</span>
         </div>
-        <div class="col-2">
+        <div class="col-1">
+            <span id="item-chinhanh-${index}">${sanPham.soLuongTon}</span>
+        </div>
+        <div class="col-1">
             <span id="item-chinhanh-${index}">${sanPham.chiNhanh}</span>
         </div>
         <div class="col-1">

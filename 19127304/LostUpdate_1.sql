@@ -2,7 +2,7 @@
 GO
 
 -- Transaction 1: Bán được 3 sản phẩm '100001' và cập nhật số lượng tồn
-Create procedure Ban_SanPham_SoLuong
+alter procedure Ban_SanPham_SoLuong
 (
 	@masp int,
 	@soluongban int
@@ -29,7 +29,7 @@ Begin Tran
 
 		Set @soluongton = @soluongton - @soluongban
 
-		Waitfor DELAY '00:00:12'
+		Waitfor DELAY '00:00:05'
 		Update SANPHAM
 		Set SoLuongTon = @soluongton
 		Where MaSP = @masp
@@ -50,7 +50,7 @@ Commit Tran
 Go
 
 -- Transaction 2: Thêm vào 5 sản phẩm '100001' và cập nhật số lượng tồn
-Create procedure Them_SanPham_SoLuong
+alter procedure Them_SanPham_SoLuong
 (
 	@masp int,
 	@soluongthem int
@@ -76,7 +76,7 @@ Begin Tran
 		Select @soluongton =(select SoLuongTon
 							from SANPHAM where MaSP = @masp)
 
-		Waitfor DELAY '00:00:03'
+		Waitfor DELAY '00:00:02'
 		Set @soluongton = @soluongton + @soluongthem
 		
 		Update SANPHAM

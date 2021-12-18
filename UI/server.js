@@ -103,13 +103,14 @@ app.post('/insert-order-post', async function (req, res) {
    exec Them_DONHANG ${response.donhang}, '${response.ngaylap}', N'${response.httt}', N'${response.diachi}', ${response.tongtien}, ${response.phiVC}, ${response.khachhang}, ${response.chinhanh}
    `; 
 
+
    response.cart_list.forEach(element => {
-      sqlQuery += `exec Them_CTDonHang ${element.id}, ${response.donhang}, ${element.soluong}, ${element.gia}
-   `;
+      sqlQuery += `exec Ban_SanPham_SoLuong ${element.id}, ${element.soluong}
+      exec Them_CTDonHang ${element.id}, ${response.donhang}, ${element.soluong}, ${element.gia}
+      `;
    });
 
    sqlQuery += `commit tran`; 
-   console.log("CTDH: ", sqlQuery);
 
    const request = new sql.Request(); 
    request.query(sqlQuery, (err, result) => {

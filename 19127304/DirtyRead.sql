@@ -2,7 +2,7 @@
 GO
 
 -- Transaction 1: Bán 8 sản phẩm '100028', sau đó hủy do lỗi số lượng
-Create procedure Ban_SanPham_SoLuong
+alter procedure Ban_SanPham_SoLuong
 (
 	@masp int,
 	@soluongban int
@@ -33,7 +33,7 @@ Begin Tran
 		Set SoLuongTon = @soluongton
 		Where MaSP = @masp
 
-		Waitfor DELAY '00:00:10'
+		Waitfor DELAY '00:00:05'
 		if exists
 		(
 			select *
@@ -50,7 +50,7 @@ Commit Tran
 Go
 
 -- Transaction 2: Xem thông tin sản phẩm '100028' thuộc chi nhánh '100023'
-create procedure XemTatCa_SANPHAM_ThuocChiNhanh
+alter procedure XemTatCa_SANPHAM_ThuocChiNhanh
 (
 	@MaChiNhanh int
 )

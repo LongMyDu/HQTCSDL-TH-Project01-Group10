@@ -341,6 +341,7 @@ declare @TongSoSP int
 
 GO
 
+
 --Procedure xem tất cả đơn hàng của chi nhánh X có tình trạng vận chuyển Y
 create procedure XemTatCa_DONHANG_ThuocChiNhanh
 (

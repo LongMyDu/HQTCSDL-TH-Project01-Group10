@@ -26,7 +26,7 @@ begin tran
 		update SANPHAM 
 		set Gia = convert(bigint, Gia * (100 - @PhanTramGiamGia) /100)
 		where MaChiNhanh = @MaChiNhanh
-		WAITFOR DELAY '00:00:10'
+		WAITFOR DELAY '00:00:05'
 	end
 	Declare @Suco bit = 1
 	if (@Suco = 1)

@@ -339,6 +339,7 @@ declare @TongSoSP int
 	select @TongSoSP as Tongso
 	commit tran
 
+GO
 
 --Procedure xem tất cả đơn hàng của chi nhánh X có tình trạng vận chuyển Y
 create procedure XemTatCa_DONHANG_ThuocChiNhanh

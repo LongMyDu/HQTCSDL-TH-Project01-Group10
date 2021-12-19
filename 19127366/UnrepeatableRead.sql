@@ -21,7 +21,7 @@ begin tran
 		Set @KetQuaTimKiem = (N'Tồn tại kết quả')
 		print @KetQuaTimKiem
 
-		WAITFOR DELAY '00:00:10'
+		WAITFOR DELAY '00:00:05'
 		Select * 
 		From SANPHAM SP
 		Where SP.TenSP LIKE ('%' + @TenSP + '%')

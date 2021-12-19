@@ -40,28 +40,31 @@ begin tran
 GO
 
 -- Transaction 2: : Đọc thông tin các sản phẩm được cung cấp bởi chi nhánh 1.
-alter procedure XemTatCa_SANPHAM_ThuocChiNhanh
+
+alter proc XemTatCa_SANPHAM_ThuocChiNhanh
 (
 	@MaChiNhanh int
 )
 as
-begin tran
-	
-	SET TRAN ISOLATION LEVEL READ COMMITTED		
+begin tran 
+	SET TRAN ISOLATION LEVEL READ COMMITTED	
 	if @MaChiNhanh != NULL and not exists 
-	(
-		select *
-		from CHINHANH CN
-		where CN.MaChiNhanh = @MaChiNhanh
-	)
-	begin
-		raiserror('Không tìm thấy chi nhánh.', 16, 1);
-		rollback tran
-	end
-	else 
-	begin
-		Select *
-		From SANPHAM
-		Where MaChiNhanh = @MaChiNhanh
-		commit tran
-	end
+		(
+			select *
+			from CHINHANH CN
+			where CN.MaChiNhanh = @MaChiNhanh
+		)
+		begin
+			raiserror('Không tìm thấy chi nhánh.', 16, 1);
+			rollback tran
+		end
+		declare @TongSoSP int 
+		set @TongSoSP = (select count (sp.MaSP) from SANPHAM sp 
+							where sp.MaChiNhanh = @MaChiNhanh)
+		print N'Có ' + cast (@TongSoSP as nvarchar(10))+N' sản phẩm'
+
+	select  * from SANPHAM sp where sp.MaChiNhanh = @MaChiNhanh 
+	select @TongSoSP as Tongso
+	commit tran
+
+GO

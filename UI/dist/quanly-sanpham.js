@@ -44,6 +44,18 @@ const sendGetSanPhamListRequest = (chinhanh, callback) => {
         callback(message_received.totalItems, message_received.sanpham_list);
     };
     request.send();
+
+     // thêm để show tổng số sản phẩm đọc được trước khi thêm 1 sp vào 
+    request.onreadystatechange = function() { 
+        // Call a function when the state changes.
+        if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+            // Request finished. Do processing here.
+            let message_received = JSON.parse(request.response);
+            console.log("Message received: ", message_received);
+            //showData(message_received.totalResult, message_received.sanpham_list);
+            alert("Tổng số sản phẩm là: " + message_received.tongSP_Ao[0].tongso);
+        }
+    }
 }
 
 const clearSanPhamList = () => {

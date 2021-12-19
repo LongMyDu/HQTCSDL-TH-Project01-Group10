@@ -6,14 +6,14 @@ const { request } = require('express');
 
 let newID;
 
-// const config = {
-//    user: 'sa',
-//    password: 'lmd',
-//    server: 'localhost', 
-//    port: 51713,
-//    database: 'DB_QLDatChuyenHang',
-//    trustServerCertificate: true,
-// };
+const config = {
+   user: 'sa',
+   password: 'lmd',
+   server: 'localhost', 
+   port: 51713,
+   database: 'DB_QLDatChuyenHang',
+   trustServerCertificate: true,
+};
 
 // const config = {
 //    user: 'sa',
@@ -313,7 +313,7 @@ app.get('/api/sanpham-list', function (req, res) {
         res.status(500).send(err);
         return;
       }
-      console.log("result: ", result.recordsets[1]);
+      console.log("result: ", result.recordsets);
       var totalItems = result.recordset.length;
       const total_sanpham_list = result.recordset.map(elm => ({ id: elm.MaSP, tenSP: elm.TenSP, gia: elm.Gia, soLuongTon: elm.SoLuongTon, chiNhanh: elm.MaChiNhanh}));
       const tongSP_Ao = result.recordsets[1].map(elm => ({ tongso: elm.Tongso}));
@@ -389,8 +389,12 @@ app.post('/searchSP-post', async function (req, res) {
       }
       if (result.recordset)
       {
+         console.log(result.output);
          const total_sanpham_list = result.recordset.map(elm => ({ id: elm.MaSP, tenSP: elm.TenSP, gia: elm.Gia, soLuongTon: elm.SoLuongTon, chiNhanh: elm.MaChiNhanh}));
          res.json({totalResult: result.recordset.length, sanpham_list: total_sanpham_list, kqTimKiem: result.output.KetQuaTimKiem});
+      }
+      else {
+         res.json({totalResult: 0, kqTimKiem: result.output.KetQuaTimKiem});
       }
    })
 })

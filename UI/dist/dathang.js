@@ -189,12 +189,6 @@ HtmlElements.datHangForm.addEventListener("submit", (e) => {
     let phiVC = 20000;
     console.log(diachi, httt, chinhanh);
 
-    // httt :req.body.HTTT,
-    //   diachi: req.body.DiaChi,
-    //   tongtien: req.body.TongTien,
-    //   phiVC: req.body.PhiVC,
-    //   chinhanh: req.body.MaChiNhanh,
-    //   cart_list: JSON.parse(req.body.cart_list)
     data = `DiaChi=${diachi}&HTTT=${httt}&TongTien=${tongtien}&PhiVC=${phiVC}&MaChiNhanh=${chinhanh}&cart_list=` + JSON.stringify(global_cart_list);
 
     // console.log(`Insert view: customer_id=${customer_id}&date=${date}&product_detail_list=` + JSON.stringify(product_detail_list));
@@ -229,9 +223,12 @@ HtmlElements.timKiemSPForm.addEventListener("submit", (e) => {
         if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
             // Request finished. Do processing here.
             let message_received = JSON.parse(request.response);
-            console.log("Message received: ", message_received);
-            showData(message_received.totalResult, message_received.sanpham_list);
             alert(message_received.kqTimKiem);
+
+            console.log("Message received: ", message_received);
+            if (message_received.totalResult > 0)
+                showData(message_received.totalResult, message_received.sanpham_list);
+            
         }
     }
     request.send(data);

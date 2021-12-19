@@ -1,0 +1,18 @@
+{
+  "name": "hqt-project-group10",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "express-redirect": "^1.2.2",
+    "mssql": "^7.3.0",
+    "nodemon": "^2.0.15"
+  }
+}

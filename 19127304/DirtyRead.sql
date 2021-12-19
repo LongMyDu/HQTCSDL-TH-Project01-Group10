@@ -68,11 +68,14 @@ begin tran
 		raiserror('Không tìm thấy chi nhánh.', 16, 1);
 		rollback tran
 	end
-	else 
-	begin
-		Select *
-		From SANPHAM
-		Where MaChiNhanh = @MaChiNhanh
-		commit tran
-	end
+
+	declare @TongSoSP int 
+	set @TongSoSP = (select count (sp.MaSP) from SANPHAM sp 
+						where sp.MaChiNhanh = @MaChiNhanh)
+	print N'Có ' + cast (@TongSoSP as nvarchar(10))+N' sản phẩm'
+
+	select  * from SANPHAM sp where sp.MaChiNhanh = @MaChiNhanh 
+	select @TongSoSP as Tongso
+
+	commit tran
 GO
